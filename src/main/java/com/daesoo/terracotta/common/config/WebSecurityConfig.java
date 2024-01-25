@@ -10,6 +10,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.daesoo.terracotta.common.jwt.JwtAuthFilter;
+import com.daesoo.terracotta.common.jwt.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class WebSecurityConfig {
+	
+	private final JwtUtil jwtUtil;
 
 	@Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,6 +41,7 @@ public class WebSecurityConfig {
 	        .csrf(AbstractHttpConfigurer::disable)
 	        .authorizeHttpRequests((authorizeRequests) ->
 	        	authorizeRequests.anyRequest().permitAll()
+	        .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
 	        );
 
 

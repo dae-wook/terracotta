@@ -1,6 +1,7 @@
 package com.daesoo.terracotta.schematic;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.daesoo.terracotta.common.dto.ResponseDto;
+import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.schematic.util.Schematic;
 
 import lombok.RequiredArgsConstructor;
@@ -28,9 +30,14 @@ public class SchematicController {
 	@GetMapping("/api/scheme")
 	@ResponseBody
 	public ResponseDto<Schematic> hello(@RequestParam("number") int number) {
-//		System.out.println("�����Դ� " + number);
 		return ResponseDto.success(HttpStatus.OK,mainService.getShematic(number));
 	}
+	
+//	@GetMapping("/api/scheme")
+//	@ResponseBody
+//	public ResponseDto<Schematic> hello(@RequestParam("number") int number, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//		return ResponseDto.success(HttpStatus.OK,mainService.getShematic(number));
+//	}
 	
 	@RequestMapping("/")
 	public String index() {

@@ -24,7 +24,6 @@ public class SchemeParser {
 	public static Schematic getSchematic(int number) {
 		Schematic schematic = null;
 		String fileName = null;
-		final String SCHEMATIC_PATH = "C:/Users/admin/AppData/Roaming/.minecraft/schematics/";
 		if(number == 1) {
 			fileName = "test.schem";
 		}else if(number == 2) {
@@ -110,7 +109,7 @@ public class SchemeParser {
 				Map<String, Tag> paletteMap = paletteCompound.getValue();
 				Map<String, Integer> paletteResponseMap = new HashMap<>();
 
-				//�ȷ�Ʈ
+				//팔레트
 				for(String key : paletteMap.keySet()) {
 					paletteResponseMap.put(key, (int)paletteMap.get(key).getValue());
 				}

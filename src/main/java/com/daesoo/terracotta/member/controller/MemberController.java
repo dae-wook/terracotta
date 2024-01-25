@@ -1,4 +1,4 @@
-package com.daesoo.terracotta.member;
+package com.daesoo.terracotta.member.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.daesoo.terracotta.common.dto.ResponseDto;
+import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
+import com.daesoo.terracotta.member.service.MemberService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +29,9 @@ public class MemberController {
 		return ResponseDto.success(HttpStatus.CREATED, memberService.signup(signupRequestDto));
 	}
 	
+	@PostMapping("/login")
+	public ResponseDto<MemberResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+		return ResponseDto.success(HttpStatus.OK, memberService.login(loginRequestDto, response));
+	}
 	
-
 }
