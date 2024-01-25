@@ -1,31 +1,35 @@
 package com.daesoo.terracotta.common.dto;
 
+import org.springframework.http.HttpStatus;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
+@AllArgsConstructor
+@Builder
 public class ResponseDto<T> {
 
-//    private int statusCode;
     private T result;
-
-//    public ResponseDto (int statusCode, T data) {
-//        this.statusCode = statusCode;
-//        this.result = data;
-//    }
+    private int statusCode;
 
     public ResponseDto (T data) {
-//        this.statusCode = statusCode;
         this.result = data;
     }
 
-    public static <T> ResponseDto<T> success(T dto) {
-        return new ResponseDto<>(dto);
+    public static <T> ResponseDto<T> success(HttpStatus httpStatus, T dto) {
+        return ResponseDto.<T> builder()
+        		.result(dto)
+        		.statusCode(httpStatus.value())
+        		.build();
     }
 
-    public static <T> ResponseDto<T> fail(T result) {
-        return new ResponseDto<>(result);
+    public static ResponseDto<String> fail(HttpStatus httpStatus, String message) {
+    	return ResponseDto.<String> builder()
+        		.result(message)
+        		.statusCode(httpStatus.value())
+        		.build();
     }
 
 }

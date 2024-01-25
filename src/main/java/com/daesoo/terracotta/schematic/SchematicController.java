@@ -1,5 +1,6 @@
 package com.daesoo.terracotta.schematic;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,8 +28,8 @@ public class SchematicController {
 	@GetMapping("/api/scheme")
 	@ResponseBody
 	public ResponseDto<Schematic> hello(@RequestParam("number") int number) {
-//		System.out.println("¼öÁø¿Ô´Ù " + number);
-		return ResponseDto.success(mainService.getShematic(number));
+//		System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ " + number);
+		return ResponseDto.success(HttpStatus.OK,mainService.getShematic(number));
 	}
 	
 	@RequestMapping("/")

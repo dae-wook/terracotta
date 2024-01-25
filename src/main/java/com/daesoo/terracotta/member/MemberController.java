@@ -1,5 +1,6 @@
 package com.daesoo.terracotta.member;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ public class MemberController {
 	@PostMapping("/signup")
 	public ResponseDto<MemberResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
 		
-		return ResponseDto.success(memberService.signup(signupRequestDto));
+		return ResponseDto.success(HttpStatus.CREATED, memberService.signup(signupRequestDto));
 	}
 	
 	

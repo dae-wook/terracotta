@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.daesoo.terracotta.common.MemberRepository;
+import com.daesoo.terracotta.common.repository.MemberRepository;
 import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;

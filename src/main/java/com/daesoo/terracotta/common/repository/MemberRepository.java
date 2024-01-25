@@ -1,4 +1,4 @@
-package com.daesoo.terracotta.common;
+package com.daesoo.terracotta.common.repository;
 
 import java.util.Optional;
 
@@ -14,5 +14,4 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
 	Optional<Member> findByUsername(String username);
 	Optional<Member> findByEmail(String Email);
 	
-
 }

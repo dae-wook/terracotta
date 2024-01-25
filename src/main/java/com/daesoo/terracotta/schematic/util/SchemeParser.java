@@ -2,7 +2,7 @@ package com.daesoo.terracotta.schematic.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.ByteBuffer;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +12,7 @@ import org.jnbt.LongArrayTag;
 import org.jnbt.NBTInputStream;
 import org.jnbt.ShortTag;
 import org.jnbt.Tag;
+import org.springframework.core.io.ClassPathResource;
 
 
 public class SchemeParser {
@@ -89,10 +90,8 @@ public class SchemeParser {
 		}else if(number == 60) {
 			fileName = "pumpfarm.litematic";
 		}
-		try {
-			File f = new File(SCHEMATIC_PATH + fileName);
-			//"C:/Users/admin/AppData/Roaming/.minecraft/config/worldedit/schematics/20726.schem"
-			FileInputStream fis = new FileInputStream(f);
+		ClassPathResource resource = new ClassPathResource("static/schematics/" + fileName);
+		try(InputStream fis = resource.getInputStream()) {
 			NBTInputStream nbt = new NBTInputStream(fis);
 
 			CompoundTag backuptag = (CompoundTag) nbt.readTag();
@@ -111,7 +110,7 @@ public class SchemeParser {
 				Map<String, Tag> paletteMap = paletteCompound.getValue();
 				Map<String, Integer> paletteResponseMap = new HashMap<>();
 
-				//�ȷ�Ʈ
+				//�ȷ�Ʈ
 				for(String key : paletteMap.keySet()) {
 					paletteResponseMap.put(key, (int)paletteMap.get(key).getValue());
 				}
