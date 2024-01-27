@@ -2,11 +2,9 @@ package com.daesoo.terracotta.common.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.concurrent.ThreadLocalRandom;
+import java.time.Instant;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.coyote.BadRequestException;
@@ -17,13 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.utility.RandomString;
 
 @Component
 @Slf4j
@@ -59,8 +55,9 @@ public class FileUtil {
 			Storage storage = options.getService();
 			Bucket bucket = storage.get(gcpBucketId,Storage.BucketGetOption.fields());
 
-			RandomString id = new RandomString(6, ThreadLocalRandom.current());
-			String saveFileName = fileName + "-" + id.nextString() + checkFileExtension(originalFileName);
+			Instant instant = Instant.now();
+			long currentTimeMillis = instant.toEpochMilli();
+			String saveFileName = fileName + "-" + currentTimeMillis + checkFileExtension(originalFileName);
 			Blob blob = bucket.create(gcpDirectoryName + "/" + saveFileName, fileData, contentType);
 
 			if(blob != null){
