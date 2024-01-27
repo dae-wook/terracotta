@@ -14,6 +14,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.daesoo.terracotta.common.jwt.JwtAuthFilter;
 import com.daesoo.terracotta.common.jwt.JwtUtil;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +25,11 @@ import lombok.RequiredArgsConstructor;
 public class WebSecurityConfig {
 	
 	private final JwtUtil jwtUtil;
+	
+	@Bean
+	public Storage storage() {
+	    return StorageOptions.getDefaultInstance().getService();
+	}
 
 	@Bean
     public PasswordEncoder passwordEncoder() {

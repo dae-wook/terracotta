@@ -34,6 +34,7 @@ out/
 /.nb-gradle/
 
 ### property ###
-*-*.properties
+**/resources/*-*.properties
+**.json
 
 **/static

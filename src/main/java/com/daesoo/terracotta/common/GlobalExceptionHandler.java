@@ -25,6 +25,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class, EntityNotFoundException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseDto<?> handle(Exception ex) {
+    	ex.printStackTrace();
         return ResponseDto.fail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
     

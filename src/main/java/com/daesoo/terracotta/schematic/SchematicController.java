@@ -1,24 +1,18 @@
 package com.daesoo.terracotta.schematic;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.daesoo.terracotta.common.dto.ResponseDto;
-import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.schematic.util.Schematic;
 
 import lombok.RequiredArgsConstructor;
 
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 //@CrossOrigin(origins = "http://localhost:3737, http://localhost:8080")
 @CrossOrigin(origins = "*")
@@ -28,26 +22,9 @@ public class SchematicController {
 	
 	
 	@GetMapping("/api/scheme")
-	@ResponseBody
-	public ResponseDto<Schematic> hello(@RequestParam("number") int number) {
-		return ResponseDto.success(HttpStatus.OK,mainService.getShematic(number));
+	public ResponseDto<Schematic> hello(@RequestBody String fileName) {
+		System.out.println(fileName);
+		return ResponseDto.success(HttpStatus.OK,mainService.getShematic(fileName));
 	}
 	
-//	@GetMapping("/api/scheme")
-//	@ResponseBody
-//	public ResponseDto<Schematic> hello(@RequestParam("number") int number, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//		return ResponseDto.success(HttpStatus.OK,mainService.getShematic(number));
-//	}
-	
-	@RequestMapping("/")
-	public String index() {
-		return "index";
-	}
-	
-	@GetMapping("/test/{number}")
-	public String test(Model model, @PathVariable("number") long number) {
-		model.addAttribute("schematic", mainService.getShematic(Integer.parseInt(""+number)));
-		return "test";
-	}
-
 }
