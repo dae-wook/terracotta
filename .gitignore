@@ -36,5 +36,6 @@ out/
 ### property ###
 **/resources/*-*.properties
 **.json
+**.schem
 
 **/static
