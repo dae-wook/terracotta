@@ -13,12 +13,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(name="tag_categoires")
+@Entity(name="tag_group")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TagCategory {
+public class TagGroup {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +26,6 @@ public class TagCategory {
 	
 	private String name;
 	
-	@OneToMany(mappedBy = "tagCategory")
+	@OneToMany(mappedBy = "tagGroup")
 	private List<Tag> tags = new ArrayList<>();
 }

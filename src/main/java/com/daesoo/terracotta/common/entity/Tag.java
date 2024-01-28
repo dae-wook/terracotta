@@ -30,16 +30,16 @@ public class Tag {
     private String name;
     
     @ManyToOne
-    @JoinColumn(name = "tag_category_id")
-    private TagCategory tagCategory;
+    @JoinColumn(name = "tag_group_id")
+    private TagGroup tagGroup;
 
     @OneToMany(mappedBy = "tag")
     private List<PostTag> postTags = new ArrayList<>();
 
-    public static Tag create(TagCategory tagCategory) {
+    public static Tag create(TagGroup tagCategory) {
     	return Tag.builder()
     			.name("dd")
-    			.tagCategory(tagCategory)
+    			.tagGroup(tagCategory)
     			.build();
     }
     
