@@ -48,4 +48,19 @@ public class SchematicPostResponseDto {
 				.build();
 	}
 	
+	public static SchematicPostResponseDto of(SchematicPost schematicPost) {
+		return SchematicPostResponseDto.builder()
+				.id(schematicPost.getId())
+				.title(schematicPost.getTitle())
+				.content(schematicPost.getContent())
+				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
+				.memberUserId(schematicPost.getMember().getUserId())
+				.memberUsername(schematicPost.getMember().getUsername())
+				.filePath(schematicPost.getFilePath())
+				.schematic(null)
+				.createdAt(schematicPost.getCreatedAt())
+				.modifiedAt(schematicPost.getModifiedAt())
+				.build();
+	}
+	
 }

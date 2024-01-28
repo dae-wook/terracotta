@@ -2,6 +2,9 @@ package com.daesoo.terracotta.post.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.common.entity.Member;
@@ -56,6 +59,14 @@ public class SchematicPostService {
 		
 		
 		return SchematicPostResponseDto.of(schematicPost, schematic);
+	}
+
+
+	public Page<SchematicPostResponseDto> getSchematicPostList(Integer page, Integer size) {
+
+		Pageable pageable = PageRequest.of(page - 1, size);
+		
+		return schematicPostRepository.findAll(pageable).map(SchematicPostResponseDto::of);
 	}
 
 }

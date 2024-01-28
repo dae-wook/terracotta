@@ -1,11 +1,13 @@
 package com.daesoo.terracotta.post.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.daesoo.terracotta.common.dto.ResponseDto;
@@ -30,6 +32,15 @@ public class SchematicPostController {
 			SchematicPostRequestDto schematicPostRequestDto,
 			@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		return ResponseDto.success(HttpStatus.OK, schematicPostService.createSchematicPost(schematicPostRequestDto, userDetails.getUser()));
+	}
+	
+	@GetMapping
+	public ResponseDto<Page<SchematicPostResponseDto>> getSchematicPostList(
+            @RequestParam(name="page", defaultValue = "1") Integer page,
+            @RequestParam(name="size", defaultValue = "10") Integer size
+			) {
+		
+		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematicPostList(page, size));
 	}
 	
 	@GetMapping("{schematicPostId}")
