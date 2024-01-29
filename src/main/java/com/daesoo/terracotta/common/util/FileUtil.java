@@ -48,7 +48,7 @@ public class FileUtil {
 			String originalFileName = multipartFile.getOriginalFilename();
 			String fileName = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
 			log.debug("업로드 시작");
-			byte[] fileData = FileUtils.readFileToByteArray(convertFile(multipartFile));
+			byte[] fileData = multipartFile.getBytes();
 
 			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
 
@@ -81,7 +81,7 @@ public class FileUtil {
 			String originalFileName = multipartFile.getOriginalFilename();
 			String fileName = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
 			log.debug("업로드 시작");
-			byte[] fileData = FileUtils.readFileToByteArray(convertFile(multipartFile));
+			byte[] fileData = multipartFile.getBytes();
 
 			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
 
@@ -158,7 +158,6 @@ public class FileUtil {
 	
 	public InputStream downloadSchematicFileToInputStream(String fileName) {
 		try {
-			System.out.println(fileName);
 			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
 			
 			
