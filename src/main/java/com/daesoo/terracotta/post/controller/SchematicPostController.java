@@ -18,12 +18,10 @@ import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 import com.daesoo.terracotta.post.service.SchematicPostService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/schematic-posts")
 @RequiredArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "*")
 public class SchematicPostController {
 	

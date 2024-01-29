@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.daesoo.terracotta.common.dto.ResponseDto;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ValidationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

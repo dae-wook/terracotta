@@ -12,12 +12,10 @@ import com.daesoo.terracotta.tag.dto.TagGroupResponseDto;
 import com.daesoo.terracotta.tag.service.TagGroupService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/tag-group")
 @RequiredArgsConstructor
-@Slf4j
 public class TagGroupController {
 	
 	private final TagGroupService tagGroupService;

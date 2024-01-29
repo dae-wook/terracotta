@@ -1,13 +1,9 @@
 package com.daesoo.terracotta.common.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.time.Instant;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -30,13 +26,13 @@ public class FileUtil {
 
 	@Value("${GCP_BUCKET}")
 	private String gcpBucketId;
-	
+
 	@Value("${GCP_BUCKET_IMAGE}")
 	private String gcpBucketImageId;
 
 	@Value("${GCP_PROJECT_ID}")
 	private String gcpProjectId;
-	
+
 	@Value("${GCP_DIR_NAME}")
 	private String directory;
 
@@ -46,10 +42,10 @@ public class FileUtil {
 
 			String originalSchematicFileName = schematic.getOriginalFilename();
 			String fileName = originalSchematicFileName.substring(0, originalSchematicFileName.lastIndexOf('.'));
-			
+
 			String originalImageFileName = image.getOriginalFilename();
 			String imageFileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
-			
+
 			log.debug("업로드 시작");
 			byte[] schematicFileData = schematic.getBytes();
 			byte[] imageFileData = image.getBytes();
@@ -65,13 +61,13 @@ public class FileUtil {
 
 			Instant instant = Instant.now();
 			long currentTimeMillis = instant.toEpochMilli();
-			
+
 			String saveSchematicFileName = fileName + "-s" + currentTimeMillis + checkFileExtension(originalSchematicFileName);
 			String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
 
 			Blob schematicBlob = schematicBucket.create(directory + "/" + saveSchematicFileName, schematicFileData, schematic.getContentType());
 			Blob imageBlob = imageBucket.create("schematic/thumbs/" + saveImageFileName, imageFileData, image.getContentType());
-			
+
 			if(schematicBlob != null && imageBlob != null){
 				log.debug("업로드 성공");
 				return new String[]{saveSchematicFileName, saveImageFileName};
@@ -82,25 +78,7 @@ public class FileUtil {
 		}
 		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
 	}
-	
 
-	private File convertFile(MultipartFile file) {
-
-		try{
-			if(file.getOriginalFilename() == null){
-				throw new BadRequestException("파일 이름이 비어있음");
-			}
-			File convertedFile = new File(file.getOriginalFilename());
-
-			FileOutputStream outputStream = new FileOutputStream(convertedFile);
-			outputStream.write(file.getBytes());
-			outputStream.close();
-			log.debug("변환된 파일 : {}", convertedFile);
-			return convertedFile;
-		}catch (Exception e){
-			throw new IllegalArgumentException("변환 중 에러 발생");
-		}
-	}
 
 	private String checkFileExtension(String fileName) {
 		if(fileName != null && fileName.contains(".")){
@@ -116,7 +94,7 @@ public class FileUtil {
 		log.error("허용되지 않은 파일 형식");
 		throw new IllegalArgumentException("허용되지 않은 파일 형식");
 	}
-	
+
 	private String checkImageFileExtension(String fileName) {
 		if(fileName != null && fileName.contains(".")){
 			String[] extensionList = {".png", ".jpg", ".webp"};
@@ -132,18 +110,18 @@ public class FileUtil {
 		throw new IllegalArgumentException("허용되지 않은 파일 형식");
 	}
 
-	
+
 	public InputStream downloadSchematicFileToInputStream(String fileName) {
 		try {
 			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
-			
-			
+
+
 			Storage storage = StorageOptions.newBuilder().setProjectId(gcpProjectId).setCredentials(GoogleCredentials.fromStream(inputStream)).build().getService();
 			byte[] content = storage.readAllBytes(gcpBucketId, "schematics/" + fileName);
-			
-			
+
+
 			return new ByteArrayInputStream(content);
-			
+
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

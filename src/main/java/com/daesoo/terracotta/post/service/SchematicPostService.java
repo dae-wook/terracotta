@@ -17,7 +17,6 @@ import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 import com.daesoo.terracotta.schematic.util.Schematic;
 import com.daesoo.terracotta.schematic.util.SchemeParser;
-import com.google.cloud.storage.Storage;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ public class SchematicPostService {
 	
 	private final SchematicPostRepository schematicPostRepository;
 	private final TagRepository tagRepository;
-	private final Storage storage;
 	private final FileUtil fileUtil;
 	private final SchemeParser schemParser;
 
@@ -38,7 +36,6 @@ public class SchematicPostService {
 		
 
 		String[] filePath = fileUtil.uploadFile(schematicPostRequestDto.getFile(),schematicPostRequestDto.getImage());
-//		String image = fileUtil.uploadImage(schematicPostRequestDto.getImage(), schematicPostRequestDto.getImage().getContentType());
 		SchematicPost schematicPost = SchematicPost.create(schematicPostRequestDto, filePath, member);
 		
 		List<Tag> tags = tagRepository.findAllById(schematicPostRequestDto.getTags());

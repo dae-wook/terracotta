@@ -1,8 +1,6 @@
 package com.daesoo.terracotta.post.dto;
 
 import com.daesoo.terracotta.common.entity.PostTag;
-import com.daesoo.terracotta.common.entity.SchematicPost;
-import com.daesoo.terracotta.common.entity.Tag;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
