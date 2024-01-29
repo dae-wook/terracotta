@@ -25,5 +25,7 @@ public class SchematicPostRequestDto {
     private ArrayList<Long> tags;
     
     private MultipartFile file;
+    
+    private MultipartFile image;
 	
 }

@@ -40,6 +40,9 @@ public class SchematicPost extends TimeStamp{
 
     @Column(nullable = false)
     private String content;
+    
+    @Column(nullable = false)
+    private String image;
 
     @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL)
     private List<PostTag> postTags = new ArrayList<>();
@@ -47,11 +50,12 @@ public class SchematicPost extends TimeStamp{
     @ManyToOne
     private Member member;
     
-    public static SchematicPost create(SchematicPostRequestDto dto, String filePath, Member member) {
+    public static SchematicPost create(SchematicPostRequestDto dto, String filePath, String image, Member member) {
     	return SchematicPost.builder()
     			.title(dto.getTitle())
     			.content(dto.getContent())
     			.filePath(filePath)
+    			.image(image)
     			.member(member)
     			.postTags(new ArrayList<PostTag>())
     			.build();

@@ -30,12 +30,15 @@ public class FileUtil {
 
 	@Value("${GCP_BUCKET}")
 	private String gcpBucketId;
+	
+	@Value("${GCP_BUCKET_IMAGE}")
+	private String gcpBucketImageId;
 
 	@Value("${GCP_PROJECT_ID}")
 	private String gcpProjectId;
-
+	
 	@Value("${GCP_DIR_NAME}")
-	private String gcpDirectoryName;
+	private String directory;
 
 
 	public String uploadFile(MultipartFile multipartFile, String contentType) {
@@ -58,7 +61,7 @@ public class FileUtil {
 			Instant instant = Instant.now();
 			long currentTimeMillis = instant.toEpochMilli();
 			String saveFileName = fileName + "-" + currentTimeMillis + checkFileExtension(originalFileName);
-			Blob blob = bucket.create(gcpDirectoryName + "/" + saveFileName, fileData, contentType);
+			Blob blob = bucket.create(directory + "/" + saveFileName, fileData, contentType);
 
 			if(blob != null){
 				log.debug("업로드 성공");
@@ -69,6 +72,39 @@ public class FileUtil {
 			throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
 		}
 		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+	}
+	
+	public String uploadImage(MultipartFile multipartFile, String contentType) {
+
+		try{
+
+			String originalFileName = multipartFile.getOriginalFilename();
+			String fileName = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+			log.debug("업로드 시작");
+			byte[] fileData = FileUtils.readFileToByteArray(convertFile(multipartFile));
+
+			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+
+			StorageOptions options = StorageOptions.newBuilder().setProjectId(gcpProjectId)
+					.setCredentials(GoogleCredentials.fromStream(inputStream)).build();
+
+			Storage storage = options.getService();
+			Bucket bucket = storage.get(gcpBucketImageId,Storage.BucketGetOption.fields());		
+
+			Instant instant = Instant.now();
+			long currentTimeMillis = instant.toEpochMilli();
+			String saveFileName = fileName + "-" + currentTimeMillis + checkImageFileExtension(originalFileName);
+			Blob blob = bucket.create("post-images" + "/" + saveFileName, fileData, contentType);
+
+			if(blob != null){
+				log.debug("업로드 성공");
+				return saveFileName;
+			}
+
+		}catch (Exception e){
+			throw new IllegalArgumentException("이미지 저장 중 에러 발생");
+		}
+		throw new IllegalArgumentException("이미지 저장 중 에러 발생");
 	}
 
 	private File convertFile(MultipartFile file) {
@@ -103,16 +139,31 @@ public class FileUtil {
 		log.error("허용되지 않은 파일 형식");
 		throw new IllegalArgumentException("허용되지 않은 파일 형식");
 	}
+	
+	private String checkImageFileExtension(String fileName) {
+		if(fileName != null && fileName.contains(".")){
+			String[] extensionList = {".png", ".jpg", ".webp"};
+
+			for(String extension: extensionList) {
+				if (fileName.endsWith(extension)) {
+					log.debug("허용된 파일 확장자 : {}", extension);
+					return extension;
+				}
+			}
+		}
+		log.error("허용되지 않은 파일 형식");
+		throw new IllegalArgumentException("허용되지 않은 파일 형식");
+	}
 
 	
-	public InputStream downloadObjectToInputStream(String fileName) {
+	public InputStream downloadSchematicFileToInputStream(String fileName) {
 		try {
 			System.out.println(fileName);
 			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
 			
 			
 			Storage storage = StorageOptions.newBuilder().setProjectId(gcpProjectId).setCredentials(GoogleCredentials.fromStream(inputStream)).build().getService();
-			byte[] content = storage.readAllBytes(gcpBucketId, gcpDirectoryName + "/" + fileName);
+			byte[] content = storage.readAllBytes(gcpBucketId, "schematics/" + fileName);
 			
 			
 			return new ByteArrayInputStream(content);

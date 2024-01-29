@@ -10,7 +10,6 @@ import org.jnbt.LongArrayTag;
 import org.jnbt.NBTInputStream;
 import org.jnbt.ShortTag;
 import org.jnbt.Tag;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import com.daesoo.terracotta.common.util.FileUtil;
@@ -29,9 +28,8 @@ public class SchemeParser {
 
 	public Schematic getSchematic(String fileName) {
 		Schematic schematic = null;
-		ClassPathResource resource = new ClassPathResource("static/schematics/" + fileName);
 		try {
-			InputStream fis = fileUtil.downloadObjectToInputStream(fileName);
+			InputStream fis = fileUtil.downloadSchematicFileToInputStream(fileName);
 			NBTInputStream nbt = new NBTInputStream(fis);
 
 			CompoundTag backuptag = (CompoundTag) nbt.readTag();

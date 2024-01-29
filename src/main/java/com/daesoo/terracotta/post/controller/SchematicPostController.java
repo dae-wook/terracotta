@@ -3,6 +3,7 @@ package com.daesoo.terracotta.post.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/schematic-posts")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "*")
 public class SchematicPostController {
 	
 	private final SchematicPostService schematicPostService;

@@ -23,6 +23,8 @@ public class SchematicPostResponseDto {
 	
 	private String memberName;
 	
+	private String image;
+	
 	private Schematic schematic;
 	
 	private LocalDateTime createdAt;
@@ -37,6 +39,7 @@ public class SchematicPostResponseDto {
 				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
 				.memberName(schematicPost.getMember().getMemberName())
 				.schematic(schematic)
+				.image(schematicPost.getImage())
 				.createdAt(schematicPost.getCreatedAt())
 				.modifiedAt(schematicPost.getModifiedAt())
 				.build();
@@ -50,6 +53,7 @@ public class SchematicPostResponseDto {
 				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
 				.memberName(schematicPost.getMember().getMemberName())
 				.schematic(null)
+				.image(schematicPost.getImage())
 				.createdAt(schematicPost.getCreatedAt())
 				.modifiedAt(schematicPost.getModifiedAt())
 				.build();
