@@ -11,16 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignupRequestDto {
 	
-	@NotBlank(message = "값이 필요합니다")
-	private String userId;
+	@Email(message = "Email 형식이 아닙니다.")
+	private String memberId;
 	
 	@NotEmpty(message = "값이 필요합니다")
 	private String password;
 	
 	@NotBlank(message = "값이 필요합니다")
-	private String username;
-	
-	@Email(message = "Email 형식이 아닙니다.")
-	private String email;
+	private String memberName;
 
 }

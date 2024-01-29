@@ -17,15 +17,11 @@ public class SchematicPostResponseDto {
 	
 	private String title;
 	
-	private String content;
+	private String description;
 	
 	private List<PostTagResponseDto> tags;
 	
-	private String memberUserId;
-	
-	private String memberUsername;
-	
-	private String filePath;
+	private String memberName;
 	
 	private Schematic schematic;
 	
@@ -37,11 +33,9 @@ public class SchematicPostResponseDto {
 		return SchematicPostResponseDto.builder()
 				.id(schematicPost.getId())
 				.title(schematicPost.getTitle())
-				.content(schematicPost.getContent())
+				.description(schematicPost.getContent())
 				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
-				.memberUserId(schematicPost.getMember().getUserId())
-				.memberUsername(schematicPost.getMember().getUsername())
-				.filePath(schematicPost.getFilePath())
+				.memberName(schematicPost.getMember().getMemberName())
 				.schematic(schematic)
 				.createdAt(schematicPost.getCreatedAt())
 				.modifiedAt(schematicPost.getModifiedAt())
@@ -52,11 +46,9 @@ public class SchematicPostResponseDto {
 		return SchematicPostResponseDto.builder()
 				.id(schematicPost.getId())
 				.title(schematicPost.getTitle())
-				.content(schematicPost.getContent())
+				.description(schematicPost.getContent())
 				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
-				.memberUserId(schematicPost.getMember().getUserId())
-				.memberUsername(schematicPost.getMember().getUsername())
-				.filePath(schematicPost.getFilePath())
+				.memberName(schematicPost.getMember().getMemberName())
 				.schematic(null)
 				.createdAt(schematicPost.getCreatedAt())
 				.modifiedAt(schematicPost.getModifiedAt())

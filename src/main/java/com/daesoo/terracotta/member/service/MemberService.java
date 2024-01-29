@@ -1,5 +1,7 @@
 package com.daesoo.terracotta.member.service;
 
+import java.util.Optional;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,16 +31,12 @@ public class MemberService {
 		
 		String encodedPassword = passwordEncoder.encode(signupRequestDto.getPassword());
 		
-		if(memberRepository.findByUserId(signupRequestDto.getUserId()).isPresent()) {
+		if(memberRepository.findByMemberId(signupRequestDto.getMemberId()).isPresent()) {
 			throw new IllegalArgumentException("중복 userId");
 		}
 		
-		if(memberRepository.findByUsername(signupRequestDto.getUsername()).isPresent()) {
+		if(memberRepository.findByMemberName(signupRequestDto.getMemberName()).isPresent()) {
 			throw new IllegalArgumentException("중복 username");
-		}
-		
-		if(memberRepository.findByEmail(signupRequestDto.getEmail()).isPresent()) {
-			throw new IllegalArgumentException("중복 email");
 		}
 		
 		Member newMember = Member.create(signupRequestDto, encodedPassword);
@@ -48,7 +46,7 @@ public class MemberService {
 	}
 
 	public MemberResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
-		Member member = memberRepository.findByUserId(loginRequestDto.getUserId()).orElseThrow(
+		Member member = memberRepository.findByMemberId(loginRequestDto.getUserId()).orElseThrow(
                 () -> new EntityNotFoundException("존재하지 않는 유저 ID")
         );
 		
@@ -56,9 +54,31 @@ public class MemberService {
 			throw new BadCredentialsException("일치하지 않는 비밀번호");
 		}
 		
-		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getUserId()));
+		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getMemberId()));
 		
 		return MemberResponseDto.of(member);
+	}
+
+	public Boolean existByUserId(String memberId) {
+
+		Optional<Member> optionalMember = memberRepository.findByMemberId(memberId);
+		
+		if(optionalMember.isPresent()) {
+			return false;
+		}
+		
+		return true;
+	}
+
+	public Boolean existByUsername(String memberName) {
+
+		Optional<Member> optionalMember = memberRepository.findByMemberName(memberName);
+		
+		if(optionalMember.isPresent()) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 }

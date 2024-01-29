@@ -15,16 +15,13 @@ public class MemberResponseDto {
 	
 	private String userName;
 	
-	private String email;
-	
 	private Boolean isActive;
 	
 	public static MemberResponseDto of(Member member) {
 		return MemberResponseDto.builder()
 				.id(member.getId())
-				.userId(member.getUserId())
-				.userName(member.getUsername())
-				.email(member.getEmail())
+				.userId(member.getMemberId())
+				.userName(member.getMemberName())
 				.isActive(member.isActive())
 				.build();
 	}

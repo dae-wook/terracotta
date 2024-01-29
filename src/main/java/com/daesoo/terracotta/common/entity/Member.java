@@ -24,26 +24,22 @@ public class Member extends TimeStamp{
 	private Long id;
 	
 	@Column(nullable = false, unique = true)
-    private String userId;
+    private String memberId;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, unique = true)
-    private String username;
-
-    @Column(nullable = false, unique = true)
-    private String email;
+    private String memberName;
     
     @Column(name = "is_active", columnDefinition = "boolean default false")
     private boolean isActive;
     
     public static Member create(SignupRequestDto signupRequestDto, String encodedPassword) {
     	return Member.builder()
-    			.userId(signupRequestDto.getUserId())
+    			.memberId(signupRequestDto.getMemberId())
     			.password(encodedPassword)
-    			.username(signupRequestDto.getUsername())
-    			.email(signupRequestDto.getEmail())
+    			.memberName(signupRequestDto.getMemberName())
     			.build();
     }
 

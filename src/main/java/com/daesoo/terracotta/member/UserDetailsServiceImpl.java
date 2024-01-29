@@ -18,10 +18,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        Member user = memberRepository.findByUserId(userId)
+        Member member = memberRepository.findByMemberId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
-        return new UserDetailsImpl(user, user.getUserId());
+        return new UserDetailsImpl(member, member.getMemberId());
     }
 
 }
