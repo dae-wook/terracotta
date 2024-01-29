@@ -94,7 +94,7 @@ public class FileUtil {
 			Instant instant = Instant.now();
 			long currentTimeMillis = instant.toEpochMilli();
 			String saveFileName = fileName + "-" + currentTimeMillis + checkImageFileExtension(originalFileName);
-			Blob blob = bucket.create("schematic/thumbs" + saveFileName, fileData, contentType);
+			Blob blob = bucket.create("schematic/thumbs/" + saveFileName, fileData, contentType);
 
 			if(blob != null){
 				log.debug("업로드 성공");
