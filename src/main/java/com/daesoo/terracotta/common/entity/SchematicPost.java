@@ -50,12 +50,12 @@ public class SchematicPost extends TimeStamp{
     @ManyToOne
     private Member member;
     
-    public static SchematicPost create(SchematicPostRequestDto dto, String filePath, String image, Member member) {
+    public static SchematicPost create(SchematicPostRequestDto dto, String[] filePath, Member member) {
     	return SchematicPost.builder()
     			.title(dto.getTitle())
     			.content(dto.getContent())
-    			.filePath(filePath)
-    			.image(image)
+    			.filePath(filePath[0])
+    			.image(filePath[1])
     			.member(member)
     			.postTags(new ArrayList<PostTag>())
     			.build();

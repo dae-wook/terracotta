@@ -37,9 +37,9 @@ public class SchematicPostService {
 	public SchematicPostResponseDto createSchematicPost(SchematicPostRequestDto schematicPostRequestDto, Member member) {
 		
 
-		String filePath = fileUtil.uploadFile(schematicPostRequestDto.getFile(), schematicPostRequestDto.getFile().getContentType());
-		String image = fileUtil.uploadImage(schematicPostRequestDto.getImage(), schematicPostRequestDto.getImage().getContentType());
-		SchematicPost schematicPost = SchematicPost.create(schematicPostRequestDto, filePath, image, member);
+		String[] filePath = fileUtil.uploadFile(schematicPostRequestDto.getFile(),schematicPostRequestDto.getImage());
+//		String image = fileUtil.uploadImage(schematicPostRequestDto.getImage(), schematicPostRequestDto.getImage().getContentType());
+		SchematicPost schematicPost = SchematicPost.create(schematicPostRequestDto, filePath, member);
 		
 		List<Tag> tags = tagRepository.findAllById(schematicPostRequestDto.getTags());
 		for(Tag tag: tags) {

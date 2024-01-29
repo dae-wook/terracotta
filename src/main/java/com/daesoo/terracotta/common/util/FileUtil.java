@@ -40,15 +40,19 @@ public class FileUtil {
 	@Value("${GCP_DIR_NAME}")
 	private String directory;
 
-
-	public String uploadFile(MultipartFile multipartFile, String contentType) {
+	public String[] uploadFile(MultipartFile schematic, MultipartFile image) {
 
 		try{
 
-			String originalFileName = multipartFile.getOriginalFilename();
-			String fileName = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+			String originalSchematicFileName = schematic.getOriginalFilename();
+			String fileName = originalSchematicFileName.substring(0, originalSchematicFileName.lastIndexOf('.'));
+			
+			String originalImageFileName = image.getOriginalFilename();
+			String imageFileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
+			
 			log.debug("업로드 시작");
-			byte[] fileData = multipartFile.getBytes();
+			byte[] schematicFileData = schematic.getBytes();
+			byte[] imageFileData = image.getBytes();
 
 			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
 
@@ -56,16 +60,21 @@ public class FileUtil {
 					.setCredentials(GoogleCredentials.fromStream(inputStream)).build();
 
 			Storage storage = options.getService();
-			Bucket bucket = storage.get(gcpBucketId,Storage.BucketGetOption.fields());
+			Bucket schematicBucket = storage.get(gcpBucketId,Storage.BucketGetOption.fields());
+			Bucket imageBucket = storage.get(gcpBucketImageId,Storage.BucketGetOption.fields());
 
 			Instant instant = Instant.now();
 			long currentTimeMillis = instant.toEpochMilli();
-			String saveFileName = fileName + "-" + currentTimeMillis + checkFileExtension(originalFileName);
-			Blob blob = bucket.create(directory + "/" + saveFileName, fileData, contentType);
+			
+			String saveSchematicFileName = fileName + "-s" + currentTimeMillis + checkFileExtension(originalSchematicFileName);
+			String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
 
-			if(blob != null){
+			Blob schematicBlob = schematicBucket.create(directory + "/" + saveSchematicFileName, schematicFileData, schematic.getContentType());
+			Blob imageBlob = imageBucket.create("schematic/thumbs/" + saveImageFileName, imageFileData, image.getContentType());
+			
+			if(schematicBlob != null && imageBlob != null){
 				log.debug("업로드 성공");
-				return saveFileName;
+				return new String[]{saveSchematicFileName, saveImageFileName};
 			}
 
 		}catch (Exception e){
@@ -74,38 +83,6 @@ public class FileUtil {
 		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
 	}
 	
-	public String uploadImage(MultipartFile multipartFile, String contentType) {
-
-		try{
-
-			String originalFileName = multipartFile.getOriginalFilename();
-			String fileName = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
-			log.debug("업로드 시작");
-			byte[] fileData = multipartFile.getBytes();
-
-			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
-
-			StorageOptions options = StorageOptions.newBuilder().setProjectId(gcpProjectId)
-					.setCredentials(GoogleCredentials.fromStream(inputStream)).build();
-
-			Storage storage = options.getService();
-			Bucket bucket = storage.get(gcpBucketImageId,Storage.BucketGetOption.fields());		
-
-			Instant instant = Instant.now();
-			long currentTimeMillis = instant.toEpochMilli();
-			String saveFileName = fileName + "-" + currentTimeMillis + checkImageFileExtension(originalFileName);
-			Blob blob = bucket.create("schematic/thumbs/" + saveFileName, fileData, contentType);
-
-			if(blob != null){
-				log.debug("업로드 성공");
-				return saveFileName;
-			}
-
-		}catch (Exception e){
-			throw new IllegalArgumentException("이미지 저장 중 에러 발생");
-		}
-		throw new IllegalArgumentException("이미지 저장 중 에러 발생");
-	}
 
 	private File convertFile(MultipartFile file) {
 
