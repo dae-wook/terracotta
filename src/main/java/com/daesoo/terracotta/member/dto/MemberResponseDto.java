@@ -11,18 +11,15 @@ public class MemberResponseDto {
 	
 	private Long id;
 	
-	private String userId;
+	private String email;
 	
-	private String userName;
-	
-	private Boolean isActive;
+	private String nickname;
 	
 	public static MemberResponseDto of(Member member) {
 		return MemberResponseDto.builder()
 				.id(member.getId())
-				.userId(member.getMemberId())
-				.userName(member.getMemberName())
-				.isActive(member.isActive())
+				.email(member.getEmail())
+				.nickname(member.getMemberName())
 				.build();
 	}
 

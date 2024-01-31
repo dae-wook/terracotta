@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.daesoo.terracotta.common.dto.ResponseDto;
+import com.daesoo.terracotta.member.dto.EmailRequestDto;
+import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
@@ -36,16 +38,28 @@ public class MemberController {
 		return ResponseDto.success(HttpStatus.OK, memberService.login(loginRequestDto, response));
 	}
 	
-	@GetMapping("/check/member-id/{memberId}")
-	public ResponseDto<Boolean> checkUserIdExists(@PathVariable("memberId") String memberId) {
+	@GetMapping("/check/member-email/{email}")
+	public ResponseDto<Boolean> checkUserIdExists(@PathVariable("email") String memberId) {
 		
-		return ResponseDto.success(HttpStatus.OK, memberService.existByUserId(memberId));
+		return ResponseDto.success(HttpStatus.OK, memberService.existByEmail(memberId));
 	}
 	
 	@GetMapping("/check/member-name/{memberName}")
 	public ResponseDto<Boolean> checkUsernameExists(@PathVariable("memberName") String memberName) {
 		
 		return ResponseDto.success(HttpStatus.OK, memberService.existByUsername(memberName));
+	}
+	
+	@PostMapping("send-email")
+	public ResponseDto<Boolean> sendEmail(@Valid @RequestBody EmailRequestDto emailRequestDto) {
+		
+		return ResponseDto.success(HttpStatus.OK, memberService.sendEmail(emailRequestDto));
+	}
+	
+	@PostMapping("email-verification")
+	public ResponseDto<Boolean> emailVerification(@Valid @RequestBody EmailVerificationRequestDto emailRequestDto) {
+		
+		return ResponseDto.success(HttpStatus.OK, memberService.emailVerification(emailRequestDto));
 	}
 	
 	

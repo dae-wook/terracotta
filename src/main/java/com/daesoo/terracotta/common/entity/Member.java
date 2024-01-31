@@ -24,7 +24,7 @@ public class Member extends TimeStamp{
 	private Long id;
 	
 	@Column(nullable = false, unique = true)
-    private String memberId;
+    private String email;
 
     @Column(nullable = false)
     private String password;
@@ -32,14 +32,12 @@ public class Member extends TimeStamp{
     @Column(nullable = false, unique = true)
     private String memberName;
     
-    @Column(name = "is_active", columnDefinition = "boolean default false")
-    private boolean isActive;
     
     public static Member create(SignupRequestDto signupRequestDto, String encodedPassword) {
     	return Member.builder()
-    			.memberId(signupRequestDto.getMemberId())
+    			.email(signupRequestDto.getEmail())
     			.password(encodedPassword)
-    			.memberName(signupRequestDto.getMemberName())
+    			.memberName(signupRequestDto.getNickname())
     			.build();
     }
 

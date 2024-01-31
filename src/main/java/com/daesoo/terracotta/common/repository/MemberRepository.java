@@ -10,7 +10,7 @@ import com.daesoo.terracotta.common.entity.Member;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long>{
 	
-	Optional<Member> findByMemberId(String memberId);
+	Optional<Member> findByEmail(String email);
 	Optional<Member> findByMemberName(String memberName);
 	
 }
