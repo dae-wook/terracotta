@@ -1,6 +1,7 @@
 package com.daesoo.terracotta.member.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
+@CrossOrigin(origins = "*")
 public class MemberController {
 	
 	private final MemberService memberService;
