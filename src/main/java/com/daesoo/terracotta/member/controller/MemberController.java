@@ -38,13 +38,13 @@ public class MemberController {
 		return ResponseDto.success(HttpStatus.OK, memberService.login(loginRequestDto, response));
 	}
 	
-	@GetMapping("/check/member-email/{email}")
+	@GetMapping("/check/email/{email}")
 	public ResponseDto<Boolean> checkUserIdExists(@PathVariable("email") String memberId) {
 		
 		return ResponseDto.success(HttpStatus.OK, memberService.existByEmail(memberId));
 	}
 	
-	@GetMapping("/check/member-name/{memberName}")
+	@GetMapping("/check/nickname/{memberName}")
 	public ResponseDto<Boolean> checkUsernameExists(@PathVariable("memberName") String memberName) {
 		
 		return ResponseDto.success(HttpStatus.OK, memberService.existByUsername(memberName));

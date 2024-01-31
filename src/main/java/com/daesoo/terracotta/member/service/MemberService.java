@@ -102,6 +102,10 @@ public class MemberService {
 	@Transactional
 	public Boolean sendEmail(EmailRequestDto emailReqeustDto) {
 		
+		if(memberRepository.findByEmail(emailReqeustDto.getEmail()).isPresent()) {
+			throw new IllegalArgumentException("중복 email");
+		}
+		
 		String email = emailReqeustDto.getEmail();
 		String authCode = mailUtil.sendEmail(email);
 		
