@@ -1,5 +1,7 @@
 package com.daesoo.terracotta.member.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +49,7 @@ public class MemberController {
 	}
 	
 	@PostMapping("/email/send")
-	public ResponseDto<Boolean> sendEmail(@Valid @RequestBody EmailRequestDto emailRequestDto) {
+	public ResponseDto<LocalDateTime> sendEmail(@Valid @RequestBody EmailRequestDto emailRequestDto) {
 		
 		return ResponseDto.success(HttpStatus.OK, memberService.sendEmail(emailRequestDto));
 	}

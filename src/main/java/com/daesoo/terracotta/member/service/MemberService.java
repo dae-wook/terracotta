@@ -100,7 +100,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Boolean sendEmail(EmailRequestDto emailReqeustDto) {
+	public LocalDateTime sendEmail(EmailRequestDto emailReqeustDto) {
 		
 		if(memberRepository.findByEmail(emailReqeustDto.getEmail()).isPresent()) {
 			throw new IllegalArgumentException("중복 email");
@@ -113,7 +113,7 @@ public class MemberService {
 		
 		emailVerificationRepository.save(emailVerification);
 		
-		return true;
+		return emailVerification.getExpireDate();
 	}
 
 	@Transactional
