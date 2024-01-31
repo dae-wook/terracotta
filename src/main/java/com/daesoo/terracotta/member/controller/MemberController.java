@@ -38,25 +38,19 @@ public class MemberController {
 		return ResponseDto.success(HttpStatus.OK, memberService.login(loginRequestDto, response));
 	}
 	
-	@GetMapping("/check/email/{email}")
-	public ResponseDto<Boolean> checkUserIdExists(@PathVariable("email") String memberId) {
+	@GetMapping("/nickname/check/{nickname}")
+	public ResponseDto<Boolean> checkUsernameExists(@PathVariable("nickname") String nickname) {
 		
-		return ResponseDto.success(HttpStatus.OK, memberService.existByEmail(memberId));
+		return ResponseDto.success(HttpStatus.OK, memberService.existByUsername(nickname));
 	}
 	
-	@GetMapping("/check/nickname/{memberName}")
-	public ResponseDto<Boolean> checkUsernameExists(@PathVariable("memberName") String memberName) {
-		
-		return ResponseDto.success(HttpStatus.OK, memberService.existByUsername(memberName));
-	}
-	
-	@PostMapping("send-email")
+	@PostMapping("/email/send")
 	public ResponseDto<Boolean> sendEmail(@Valid @RequestBody EmailRequestDto emailRequestDto) {
 		
 		return ResponseDto.success(HttpStatus.OK, memberService.sendEmail(emailRequestDto));
 	}
 	
-	@PostMapping("email-verification")
+	@PostMapping("/email/verification")
 	public ResponseDto<Boolean> emailVerification(@Valid @RequestBody EmailVerificationRequestDto emailRequestDto) {
 		
 		return ResponseDto.success(HttpStatus.OK, memberService.emailVerification(emailRequestDto));
