@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.dto.ResponseDto;
+import com.daesoo.terracotta.common.exception.UnauthorizedException;
 import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
@@ -31,6 +33,11 @@ public class SchematicPostController {
 	public ResponseDto<SchematicPostResponseDto> createSchematicPost(
 			SchematicPostRequestDto schematicPostRequestDto,
 			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage()); // 또는 다른 예외 처리
+	    }
+		
 		return ResponseDto.success(HttpStatus.OK, schematicPostService.createSchematicPost(schematicPostRequestDto, userDetails.getUser()));
 	}
 	

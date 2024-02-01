@@ -7,8 +7,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.entity.EmailVerification;
 import com.daesoo.terracotta.common.entity.Member;
+import com.daesoo.terracotta.common.exception.DuplicationException;
 import com.daesoo.terracotta.common.jwt.JwtUtil;
 import com.daesoo.terracotta.common.repository.EmailVerificationRepository;
 import com.daesoo.terracotta.common.repository.MemberRepository;
@@ -39,20 +41,20 @@ public class MemberService {
 		
 		String encodedPassword = passwordEncoder.encode(signupRequestDto.getPassword());
 		
-		EmailVerification emailVerification = emailVerificationRepository.findByEmail(signupRequestDto.getEmail()).orElseThrow(
-				() -> new IllegalArgumentException("인증 정보가 없습니다")
-				);
-		
-		if(!emailVerification.isActive()) {
-			throw new IllegalArgumentException("인증되지 않은 이메일입니다");
-		}
-		
 		if(memberRepository.findByEmail(signupRequestDto.getEmail()).isPresent()) {
-			throw new IllegalArgumentException("중복 email");
+			throw new DuplicationException(ErrorMessage.EMAIL_DUPLICATION.getMessage());
 		}
 		
 		if(memberRepository.findByMemberName(signupRequestDto.getNickname()).isPresent()) {
-			throw new IllegalArgumentException("중복 username");
+			throw new DuplicationException(ErrorMessage.USERNAME_DUPLICATION.getMessage());
+		}
+		
+		EmailVerification emailVerification = emailVerificationRepository.findByEmail(signupRequestDto.getEmail()).orElseThrow(
+				() -> new IllegalArgumentException(ErrorMessage.EMAIL_AUTH_INFO_NOT_FOUND.getMessage())
+				);
+		
+		if(!emailVerification.isActive()) {
+			throw new IllegalArgumentException(ErrorMessage.EMAIL_NOT_VERIFIED.getMessage());
 		}
 		
 		
@@ -65,11 +67,11 @@ public class MemberService {
 
 	public MemberResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
 		Member member = memberRepository.findByEmail(loginRequestDto.getEmail()).orElseThrow(
-                () -> new EntityNotFoundException("존재하지 않는 유저 Email")
+                () -> new EntityNotFoundException(ErrorMessage.WRONG_EMAIL.getMessage())
         );
 		
 		if(!passwordEncoder.matches(loginRequestDto.getPassword(), member.getPassword())) {
-			throw new BadCredentialsException("일치하지 않는 비밀번호");
+			throw new BadCredentialsException(ErrorMessage.WRONG_PASSWORD.getMessage());
 		}
 		
 		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getEmail()));
@@ -103,7 +105,7 @@ public class MemberService {
 	public LocalDateTime sendEmail(EmailRequestDto emailReqeustDto) {
 		
 		if(memberRepository.findByEmail(emailReqeustDto.getEmail()).isPresent()) {
-			throw new IllegalArgumentException("중복 email");
+			throw new IllegalArgumentException(ErrorMessage.EMAIL_DUPLICATION.getMessage());
 		}
 		
 		String email = emailReqeustDto.getEmail();
@@ -122,18 +124,15 @@ public class MemberService {
 		Optional<EmailVerification> optionalEmailVerification = emailVerificationRepository.findByEmailAndAuthCode(emailRequestDto.getEmail(), emailRequestDto.getAuthCode());
 		
 		if(!optionalEmailVerification.isPresent()) {
-			throw new IllegalArgumentException("잘못된 인증요청입니다.");
+			throw new IllegalArgumentException(ErrorMessage.INVALID_AUTHENTICATION_REQUEST.getMessage());
 		}
 		
 		EmailVerification emailVerification = optionalEmailVerification.get();
 		if(LocalDateTime.now().isAfter(emailVerification.getExpireDate())) {
-			emailVerificationRepository.delete(emailVerification);
-			throw new IllegalArgumentException("인증기한이 만료되었습니다.");
+			throw new IllegalArgumentException(ErrorMessage.EXPIRED_AUTHENTICATION.getMessage());
 		}
 		
 		emailVerification.active();
-		
-//		emailVerificationRepository.delete(emailVerification);
 		
 		return true;
 	}

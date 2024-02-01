@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.common.entity.SchematicPost;
 import com.daesoo.terracotta.common.entity.Tag;
@@ -18,6 +19,7 @@ import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 import com.daesoo.terracotta.schematic.util.Schematic;
 import com.daesoo.terracotta.schematic.util.SchemeParser;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -51,7 +53,7 @@ public class SchematicPostService {
 
 	public SchematicPostResponseDto getSchematicPost(Long schematicPostId) {
 		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId).orElseThrow(
-				() -> new NullPointerException("dd")
+				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage())
 				);
 		Schematic schematic = schemParser.getSchematic(schematicPost.getFilePath());
 		

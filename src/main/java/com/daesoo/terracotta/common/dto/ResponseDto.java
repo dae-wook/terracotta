@@ -25,9 +25,9 @@ public class ResponseDto<T> {
         		.build();
     }
 
-    public static ResponseDto<String> fail(HttpStatus httpStatus, String message) {
-    	return ResponseDto.<String> builder()
-        		.result(message)
+    public static ResponseDto<ErrorResponseDto> fail(HttpStatus httpStatus, ErrorResponseDto errorResponseDto) {
+    	return ResponseDto.<ErrorResponseDto> builder()
+        		.result(errorResponseDto)
         		.statusCode(httpStatus.value())
         		.build();
     }
