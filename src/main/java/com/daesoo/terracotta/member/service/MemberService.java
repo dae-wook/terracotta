@@ -1,6 +1,7 @@
 package com.daesoo.terracotta.member.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.authentication.BadCredentialsException;
@@ -104,6 +105,13 @@ public class MemberService {
 	@Transactional
 	public LocalDateTime sendEmail(EmailRequestDto emailReqeustDto) {
 		
+		List<EmailVerification> emailVerifications = emailVerificationRepository.findAllByEmail(emailReqeustDto.getEmail());
+		
+		//이전 인증정보가 남아있다면 삭제
+		if(emailVerifications.size() > 0) {
+			emailVerificationRepository.deleteAll(emailVerifications);
+		}
+		
 		if(memberRepository.findByEmail(emailReqeustDto.getEmail()).isPresent()) {
 			throw new IllegalArgumentException(ErrorMessage.EMAIL_DUPLICATION.getMessage());
 		}
@@ -118,16 +126,40 @@ public class MemberService {
 		return emailVerification.getExpireDate();
 	}
 
+//	@Transactional
+//	public Boolean emailVerification(EmailVerificationRequestDto emailRequestDto) {
+//
+//		Optional<EmailVerification> optionalEmailVerification = emailVerificationRepository.findByEmailAndAuthCode(emailRequestDto.getEmail(), emailRequestDto.getAuthCode());
+//		
+//		if(!optionalEmailVerification.isPresent()) {
+//			throw new IllegalArgumentException(ErrorMessage.INVALID_AUTHENTICATION_REQUEST.getMessage());
+//		}
+//		
+//		EmailVerification emailVerification = optionalEmailVerification.get();
+//		if(LocalDateTime.now().isAfter(emailVerification.getExpireDate())) {
+//			throw new IllegalArgumentException(ErrorMessage.EXPIRED_AUTHENTICATION.getMessage());
+//		}
+//		
+//		emailVerification.active();
+//		
+//		return true;
+//	}
+	
 	@Transactional
 	public Boolean emailVerification(EmailVerificationRequestDto emailRequestDto) {
 
-		Optional<EmailVerification> optionalEmailVerification = emailVerificationRepository.findByEmailAndAuthCode(emailRequestDto.getEmail(), emailRequestDto.getAuthCode());
+		Optional<EmailVerification> optionalEmailVerification = emailVerificationRepository.findByEmail(emailRequestDto.getEmail());
 		
 		if(!optionalEmailVerification.isPresent()) {
-			throw new IllegalArgumentException(ErrorMessage.INVALID_AUTHENTICATION_REQUEST.getMessage());
+			throw new IllegalArgumentException(ErrorMessage.EMAIL_AUTH_INFO_NOT_FOUND.getMessage());
 		}
 		
 		EmailVerification emailVerification = optionalEmailVerification.get();
+		
+		if(!emailVerification.getAuthCode().equals(emailRequestDto.getAuthCode())) {
+			throw new IllegalArgumentException(ErrorMessage.AUTHENTICATION_CODE_MISSMATCH.getMessage());
+		}
+		
 		if(LocalDateTime.now().isAfter(emailVerification.getExpireDate())) {
 			throw new IllegalArgumentException(ErrorMessage.EXPIRED_AUTHENTICATION.getMessage());
 		}

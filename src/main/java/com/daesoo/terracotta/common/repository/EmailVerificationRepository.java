@@ -1,5 +1,6 @@
 package com.daesoo.terracotta.common.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,7 @@ public interface EmailVerificationRepository extends JpaRepository<EmailVerifica
 	Optional<EmailVerification> findByEmailAndAuthCode(String email, String authCode);
 
 	Optional<EmailVerification> findByEmail(String email);
+
+	List<EmailVerification> findAllByEmail(String email);
 
 }

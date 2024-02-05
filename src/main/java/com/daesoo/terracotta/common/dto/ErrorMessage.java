@@ -13,6 +13,7 @@ public enum ErrorMessage {
     EMAIL_NOT_VERIFIED("인증되지 않은 이메일입니다"),
     INVALID_AUTHENTICATION_REQUEST("잘못된 인증요청입니다."),
     EXPIRED_AUTHENTICATION("인증기한이 만료되었습니다."),
+    AUTHENTICATION_CODE_MISSMATCH("인증코드가 일치하지 않습니다."),
     AUTHENTICATION_FAILED("JWT가 올바르지 않습니다"),
     ACCESS_DENIED("권한이 없습니다."),
     KEYWORD_NOT_FOUND("해당 키워드 검색 기록이 없습니다"),
