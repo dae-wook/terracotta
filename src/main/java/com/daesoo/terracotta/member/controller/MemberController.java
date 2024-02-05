@@ -32,9 +32,9 @@ public class MemberController {
 	private final MemberService memberService;
 	
 	@PostMapping("/signup")
-	public ResponseDto<MemberResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+	public ResponseDto<MemberResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto, HttpServletResponse response) {
 		
-		return ResponseDto.success(HttpStatus.CREATED, memberService.signup(signupRequestDto));
+		return ResponseDto.success(HttpStatus.CREATED, memberService.signup(signupRequestDto, response));
 	}
 	
 	@PostMapping("/login")

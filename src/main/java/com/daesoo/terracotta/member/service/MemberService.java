@@ -38,7 +38,7 @@ public class MemberService {
 	private final MailUtil mailUtil;
 
 	@Transactional
-	public MemberResponseDto signup(SignupRequestDto signupRequestDto) {
+	public MemberResponseDto signup(SignupRequestDto signupRequestDto, HttpServletResponse response) {
 		
 		String encodedPassword = passwordEncoder.encode(signupRequestDto.getPassword());
 		
@@ -62,6 +62,7 @@ public class MemberService {
 		Member newMember = Member.create(signupRequestDto, encodedPassword);
 		memberRepository.save(newMember);
 		emailVerificationRepository.delete(emailVerification);
+		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(newMember.getEmail()));
 		
 		return MemberResponseDto.of(newMember);
 	}
