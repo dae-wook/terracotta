@@ -48,6 +48,12 @@ public class MemberController {
 		return ResponseDto.success(HttpStatus.OK, memberService.existByUsername(nickname));
 	}
 	
+	@GetMapping("/email/check/{email}")
+	public ResponseDto<Boolean> checkEmailExists(@PathVariable("email") String email) {
+		
+		return ResponseDto.success(HttpStatus.OK, memberService.existByEmail(email));
+	}
+	
 	@PostMapping("/email/send")
 	public ResponseDto<LocalDateTime> sendEmail(@Valid @RequestBody EmailRequestDto emailRequestDto) {
 		
