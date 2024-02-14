@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Slf4j
 public class SchematicPost extends TimeStamp{
 	
 	@Id
@@ -43,6 +42,14 @@ public class SchematicPost extends TimeStamp{
     
     @Column(nullable = false)
     private String image;
+    
+    private int price;
+    
+    private int buyCount;
+    
+    private int commentCount;
+    
+    private float star;
 
     @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL)
     private List<PostTag> postTags = new ArrayList<>();

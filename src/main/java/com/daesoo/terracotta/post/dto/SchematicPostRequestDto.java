@@ -21,6 +21,8 @@ public class SchematicPostRequestDto {
     private String title;
 
     private String content;
+    
+    private int price;
 
     private ArrayList<Long> tags;
     
