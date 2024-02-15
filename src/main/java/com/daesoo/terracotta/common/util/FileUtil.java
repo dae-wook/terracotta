@@ -97,7 +97,7 @@ public class FileUtil {
 
 	private String checkImageFileExtension(String fileName) {
 		if(fileName != null && fileName.contains(".")){
-			String[] extensionList = {".png", ".jpg", ".webp"};
+			String[] extensionList = {".png", ".jpg", ".webp", ".jpeg"};
 
 			for(String extension: extensionList) {
 				if (fileName.endsWith(extension)) {

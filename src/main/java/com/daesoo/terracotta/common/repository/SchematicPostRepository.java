@@ -6,5 +6,6 @@ import com.daesoo.terracotta.common.entity.SchematicPost;
 
 public interface SchematicPostRepository extends JpaRepository<SchematicPost, Long>{
 	
+	
 
 }

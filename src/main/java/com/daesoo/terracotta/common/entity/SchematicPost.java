@@ -17,8 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 @Entity(name = "schematic_posts")
 @Getter
@@ -49,10 +47,15 @@ public class SchematicPost extends TimeStamp{
     
     private int commentCount;
     
+    private int totalStar;
+    
     private float star;
 
     @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL)
     private List<PostTag> postTags = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
     
     @ManyToOne
     private Member member;
@@ -72,6 +75,12 @@ public class SchematicPost extends TimeStamp{
         PostTag postTag = PostTag.create(this, tag);
         postTags.add(postTag);
         tag.getPostTags().add(postTag);
+    }
+    
+    public void addComment(Comment comment) {
+    	this.commentCount++;
+    	this.totalStar += comment.getStar();
+    	this.star = Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
     }
 
 }

@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.dto.ResponseDto;
-import com.daesoo.terracotta.common.entity.PostTag;
 import com.daesoo.terracotta.common.exception.UnauthorizedException;
 import com.daesoo.terracotta.member.UserDetailsImpl;
+import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 import com.daesoo.terracotta.post.service.SchematicPostService;
@@ -43,7 +43,7 @@ public class SchematicPostController {
 	}
 	
 	@GetMapping
-	public ResponseDto<Page<SchematicPostResponseDto>> getSchematicPostList(
+	public ResponseDto<Page<SchematicPostListResponseDto>> getSchematicPostList(
             @RequestParam(name="page", defaultValue = "1") Integer page,
             @RequestParam(name="size", defaultValue = "10") Integer size,
             @RequestParam(name="tags", defaultValue = "0") Long[] tags

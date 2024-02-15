@@ -1,6 +1,5 @@
 package com.daesoo.terracotta.post.service;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -10,13 +9,13 @@ import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.entity.Member;
-import com.daesoo.terracotta.common.entity.PostTag;
 import com.daesoo.terracotta.common.entity.SchematicPost;
 import com.daesoo.terracotta.common.entity.Tag;
 import com.daesoo.terracotta.common.repository.PostTagRepository;
 import com.daesoo.terracotta.common.repository.SchematicPostRepository;
 import com.daesoo.terracotta.common.repository.TagRepository;
 import com.daesoo.terracotta.common.util.FileUtil;
+import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 import com.daesoo.terracotta.schematic.util.Schematic;
@@ -66,15 +65,15 @@ public class SchematicPostService {
 	}
 
 
-	public Page<SchematicPostResponseDto> getSchematicPostList(Integer page, Integer size, Long[] tags) {
+	public Page<SchematicPostListResponseDto> getSchematicPostList(Integer page, Integer size, Long[] tags) {
 		
 		Pageable pageable = PageRequest.of(page - 1, size);
 		
 		if(tags[0] == 0) {
-			return schematicPostRepository.findAll(pageable).map(SchematicPostResponseDto::of);
+			return schematicPostRepository.findAll(pageable).map(SchematicPostListResponseDto::of);
 		}
 
-		return postTagRepository.findPostsByTags(pageable, tags, tags.length).map(SchematicPostResponseDto::of);
+		return postTagRepository.findPostsByTags(pageable, tags, tags.length).map(SchematicPostListResponseDto::of);
 	}
 
 }

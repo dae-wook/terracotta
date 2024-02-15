@@ -14,6 +14,7 @@ public enum ErrorMessage {
     INVALID_AUTHENTICATION_REQUEST("잘못된 인증요청입니다."),
     EXPIRED_AUTHENTICATION("인증기한이 만료되었습니다."),
     AUTHENTICATION_CODE_MISSMATCH("인증코드가 일치하지 않습니다."),
+    ALREADY_EXIST_COMMENT("이미 해당 게시글에 댓글을 작성한 사용자입니다."),
     AUTHENTICATION_FAILED("JWT가 올바르지 않습니다"),
     ACCESS_DENIED("권한이 없습니다."),
     KEYWORD_NOT_FOUND("해당 키워드 검색 기록이 없습니다"),
@@ -25,6 +26,7 @@ public enum ErrorMessage {
     WRONG_USERID("userId가 일치하지 않습니다."),
     WRONG_PASSWORD("패스워드가 틀렸습니다."),
     WRONG_JWT_TOKEN("JWT Token이 잘못되었습니다."),
+    OUT_OF_STAR_RANGE("별점 범위를 벗어났습니다."),
     UNAHTHORIZED("인증이 필요합니다."),;
 
     private final String message;

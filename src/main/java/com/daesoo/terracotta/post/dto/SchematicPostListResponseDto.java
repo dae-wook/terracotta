@@ -4,16 +4,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
-import com.daesoo.terracotta.common.entity.PostTag;
 import com.daesoo.terracotta.common.entity.SchematicPost;
-import com.daesoo.terracotta.schematic.util.Schematic;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class SchematicPostResponseDto {
+public class SchematicPostListResponseDto {
 
 	private Long id;
 	
@@ -35,16 +33,13 @@ public class SchematicPostResponseDto {
 	
 	private float star;
 	
-	private List<CommentResponseDto> comments;
-
-	private Schematic schematic;
-	
 	private LocalDateTime createdAt;
 	
 	private LocalDateTime modifiedAt;
 	
-	public static SchematicPostResponseDto of(SchematicPost schematicPost, Schematic schematic) {
-		return SchematicPostResponseDto.builder()
+	
+	public static SchematicPostListResponseDto of(SchematicPost schematicPost) {
+		return SchematicPostListResponseDto.builder()
 				.id(schematicPost.getId())
 				.title(schematicPost.getTitle())
 				.description(schematicPost.getContent())
@@ -54,8 +49,6 @@ public class SchematicPostResponseDto {
 				.star(schematicPost.getStar())
 				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
 				.memberName(schematicPost.getMember().getMemberName())
-				.comments(schematicPost.getComments().stream().map(CommentResponseDto::of).toList())
-				.schematic(schematic)
 				.image(schematicPost.getImage())
 				.createdAt(schematicPost.getCreatedAt())
 				.modifiedAt(schematicPost.getModifiedAt())
