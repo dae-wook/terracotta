@@ -12,6 +12,8 @@ import lombok.Getter;
 public class CommentResponseDto {
 	
 	private Long id;
+	
+	private Long schematicPostId;
 
     private String content;
     
@@ -26,6 +28,7 @@ public class CommentResponseDto {
     public static CommentResponseDto of(Comment comment) {
     	return CommentResponseDto.builder()
     			.id(comment.getId())
+    			.schematicPostId(comment.getSchematicPost().getId())
     			.content(comment.getContent())
     			.star(comment.getStar())
     			.memberName(comment.getMember().getMemberName())

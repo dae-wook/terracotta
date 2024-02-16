@@ -36,7 +36,7 @@ public class SchematicPostController {
 			@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		
 		if (userDetails == null) {
-	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage()); // 또는 다른 예외 처리
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
 	    }
 		
 		return ResponseDto.success(HttpStatus.OK, schematicPostService.createSchematicPost(schematicPostRequestDto, userDetails.getUser()));

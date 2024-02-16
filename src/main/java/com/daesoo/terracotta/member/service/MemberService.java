@@ -8,11 +8,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.daesoo.terracotta.comment.dto.CommentResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.entity.EmailVerification;
 import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.common.exception.DuplicationException;
 import com.daesoo.terracotta.common.jwt.JwtUtil;
+import com.daesoo.terracotta.common.repository.CommentRepository;
 import com.daesoo.terracotta.common.repository.EmailVerificationRepository;
 import com.daesoo.terracotta.common.repository.MemberRepository;
 import com.daesoo.terracotta.common.util.MailUtil;
@@ -34,6 +36,7 @@ public class MemberService {
 	private final PasswordEncoder passwordEncoder;
 	private final MemberRepository memberRepository;
 	private final EmailVerificationRepository emailVerificationRepository;
+	private final CommentRepository commentRepository;
 	private final JwtUtil jwtUtil;
 	private final MailUtil mailUtil;
 
@@ -168,6 +171,13 @@ public class MemberService {
 		emailVerification.active();
 		
 		return true;
+	}
+
+	public List<CommentResponseDto> getCommentListByLoginMember(Member member) {
+		
+//		commentRepository.findByMemberMemberId(member.getId());
+		
+		return commentRepository.findByMemberId(member.getId()).stream().map(CommentResponseDto::of).toList();
 	}
 
 	

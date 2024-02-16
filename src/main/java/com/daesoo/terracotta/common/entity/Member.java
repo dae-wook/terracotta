@@ -1,5 +1,7 @@
 package com.daesoo.terracotta.common.entity;
 
+import java.util.List;
+
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
 
 import jakarta.persistence.Column;
@@ -7,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,8 +44,8 @@ public class Member extends TimeStamp{
     			.build();
     }
 
-//    @OneToMany(mappedBy = "member")
-//    private Set<BoardWishMember> wishes;
+    @OneToMany(mappedBy = "member")
+    private List<Comment> comment;
 
 //    public static Member create(SignupRequestDto signupRequestDto, String encodedPassword) {
 //        return Member.builder()
