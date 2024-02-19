@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,6 +46,15 @@ public class MemberController {
 		return ResponseDto.success(HttpStatus.CREATED, memberService.signup(signupRequestDto, response));
 	}
 	
+	@DeleteMapping("/resign")
+	public ResponseDto<String> resign(
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		return ResponseDto.success(HttpStatus.CREATED, memberService.resign(userDetails.getUser()));
+	}
+	
 	@PostMapping("/login")
 	public ResponseDto<MemberResponseDto> login(
 			@RequestBody LoginRequestDto loginRequestDto,
@@ -81,7 +91,9 @@ public class MemberController {
 	}
 	
 	@GetMapping("/my/comments")
-	public ResponseDto<List<CommentResponseDto>> getCommentListByLoginMember(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+	public ResponseDto<List<CommentResponseDto>> getCommentListByLoginMember(
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
 		if (userDetails == null) {
 	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
 	    }

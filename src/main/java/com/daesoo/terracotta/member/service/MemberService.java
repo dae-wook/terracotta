@@ -65,9 +65,9 @@ public class MemberService {
 		Member newMember = Member.create(signupRequestDto, encodedPassword);
 		memberRepository.save(newMember);
 		emailVerificationRepository.delete(emailVerification);
-		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(newMember.getEmail()));
+		String token = jwtUtil.createToken(newMember.getEmail());
 		
-		return MemberResponseDto.of(newMember);
+		return MemberResponseDto.of(newMember, token);
 	}
 
 	public MemberResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
@@ -79,9 +79,10 @@ public class MemberService {
 			throw new BadCredentialsException(ErrorMessage.WRONG_PASSWORD.getMessage());
 		}
 		
-		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getEmail()));
+//		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getEmail()));
+		String token = jwtUtil.createToken(member.getEmail());
 		
-		return MemberResponseDto.of(member);
+		return MemberResponseDto.of(member, token);
 	}
 
 	public Boolean existByEmail(String email) {
@@ -178,6 +179,14 @@ public class MemberService {
 //		commentRepository.findByMemberMemberId(member.getId());
 		
 		return commentRepository.findByMemberId(member.getId()).stream().map(CommentResponseDto::of).toList();
+	}
+
+	
+	@Transactional
+	public String resign(Member user) {
+		// TODO Auto-generated method stub
+		memberRepository.delete(user);
+		return "탈퇴 성공";
 	}
 
 	

@@ -15,11 +15,14 @@ public class MemberResponseDto {
 	
 	private String nickname;
 	
-	public static MemberResponseDto of(Member member) {
+	private String token;
+	
+	public static MemberResponseDto of(Member member, String token) {
 		return MemberResponseDto.builder()
 				.id(member.getId())
 				.email(member.getEmail())
 				.nickname(member.getMemberName())
+				.token(token)
 				.build();
 	}
 

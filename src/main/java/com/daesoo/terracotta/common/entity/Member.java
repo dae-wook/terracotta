@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,8 +45,11 @@ public class Member extends TimeStamp{
     			.build();
     }
 
-    @OneToMany(mappedBy = "member")
-    private List<Comment> comment;
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+    
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<SchematicPost> schematicPosts;
 
 //    public static Member create(SignupRequestDto signupRequestDto, String encodedPassword) {
 //        return Member.builder()

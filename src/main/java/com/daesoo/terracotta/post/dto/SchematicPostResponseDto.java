@@ -54,7 +54,7 @@ public class SchematicPostResponseDto {
 				.star(schematicPost.getStar())
 				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
 				.memberName(schematicPost.getMember().getMemberName())
-				.comments(schematicPost.getComments().stream().map(CommentResponseDto::of).toList())
+				.comments(schematicPost.getComments() !=null ? schematicPost.getComments().stream().map(CommentResponseDto::of).toList() : null)
 				.schematic(schematic)
 				.image(schematicPost.getImage())
 				.createdAt(schematicPost.getCreatedAt())
