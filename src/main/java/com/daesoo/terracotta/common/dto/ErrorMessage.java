@@ -25,6 +25,7 @@ public enum ErrorMessage {
     WRONG_EMAIL("해당 이메일의 유저정보가 없습니다."),
     WRONG_USERID("userId가 일치하지 않습니다."),
     WRONG_PASSWORD("패스워드가 틀렸습니다."),
+    WRONG_EMAIL_OR_PASSWORD("이메일 또는 패스워드가 일치하지 않습니다."),
     WRONG_JWT_TOKEN("JWT Token이 잘못되었습니다."),
     OUT_OF_STAR_RANGE("별점 범위를 벗어났습니다."),
     UNAHTHORIZED("인증이 필요합니다."),;

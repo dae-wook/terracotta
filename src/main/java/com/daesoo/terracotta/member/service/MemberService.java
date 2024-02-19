@@ -72,11 +72,11 @@ public class MemberService {
 
 	public MemberResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
 		Member member = memberRepository.findByEmail(loginRequestDto.getEmail()).orElseThrow(
-                () -> new EntityNotFoundException(ErrorMessage.WRONG_EMAIL.getMessage())
+                () -> new EntityNotFoundException(ErrorMessage.WRONG_EMAIL_OR_PASSWORD.getMessage())
         );
 		
 		if(!passwordEncoder.matches(loginRequestDto.getPassword(), member.getPassword())) {
-			throw new BadCredentialsException(ErrorMessage.WRONG_PASSWORD.getMessage());
+			throw new BadCredentialsException(ErrorMessage.WRONG_EMAIL_OR_PASSWORD.getMessage());
 		}
 		
 //		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getEmail()));
