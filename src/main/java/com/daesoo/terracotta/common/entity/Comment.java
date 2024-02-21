@@ -45,4 +45,10 @@ public class Comment extends TimeStamp{
     			.build();
     }
 
+	public void update(CommentRequestDto dto) {
+		this.content = dto.getContent();
+		this.star = dto.getStar();
+		
+	}
+
 }

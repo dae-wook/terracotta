@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 public enum ErrorMessage {
     MEMBER_NOT_FOUND("해당 사용자가 존재하지 않습니다."),
     POST_NOT_FOUND("해당 게시글이 존재하지 않습니다."),
+    COMMENT_NOT_FOUND("해당 댓글이 존재하지 않습니다."),
+    NO_PERMISSION("권한이 없습니다."),
     EMAIL_AUTH_INFO_NOT_FOUND("이메일 인증 정보가 없습니다"),
     EMAIL_NOT_VERIFIED("인증되지 않은 이메일입니다"),
     INVALID_AUTHENTICATION_REQUEST("잘못된 인증요청입니다."),

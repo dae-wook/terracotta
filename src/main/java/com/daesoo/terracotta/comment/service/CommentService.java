@@ -49,4 +49,44 @@ public class CommentService {
 		return CommentResponseDto.of(comment);
 	}
 
+	@Transactional
+	public String deleteComment(Long commentId, Member user) {
+		
+		
+		Comment comment = commentRepository.findById(commentId).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
+				);
+		
+		if(comment.getMember().getId() != user.getId()) {
+			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
+		}
+		
+		SchematicPost schematicPost = comment.getSchematicPost();
+		schematicPost.deleteComment(comment);
+		
+		commentRepository.delete(comment);
+		
+		return "삭제 성공";
+	}
+
+	@Transactional
+	public String updateComment(Long commentId, CommentRequestDto dto, Member user) {
+		
+		Comment comment = commentRepository.findById(commentId).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
+				);
+		
+		if(comment.getMember().getId() != user.getId()) {
+			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
+		}
+		float oldStar = comment.getStar();
+		comment.update(dto);
+		
+		SchematicPost schematicPost = comment.getSchematicPost();
+		schematicPost.updateComment(comment, oldStar);
+		
+		
+		return "수정 성공";
+	}
+
 }

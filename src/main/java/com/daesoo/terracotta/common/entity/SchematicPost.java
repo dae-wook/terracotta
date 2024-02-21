@@ -83,4 +83,19 @@ public class SchematicPost extends TimeStamp{
     	this.star = Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
     }
 
+	public void deleteComment(Comment comment) {
+		this.commentCount--;
+    	this.totalStar -= comment.getStar();
+    	this.star = Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
+		
+	}
+
+	public void updateComment(Comment comment, float oldStar) {
+		// TODO Auto-generated method stub
+		this.totalStar -= oldStar;
+    	this.totalStar += comment.getStar();
+    	this.star = Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
+		
+	}
+
 }
