@@ -16,16 +16,16 @@ import lombok.NoArgsConstructor;
 @Getter
 public class TagGroupResponseDto {
 	
-	private Long tagGroupId;
+	private Long id;
 	
-	private String groupName;
+	private String name;
 	
 	private List<TagResponseDto> tags;
 	
 	public static TagGroupResponseDto of(TagGroup tagGroup) {
 		return TagGroupResponseDto.builder()
-				.tagGroupId(tagGroup.getId())
-				.groupName(tagGroup.getName())
+				.id(tagGroup.getId())
+				.name(tagGroup.getName())
 				.tags(tagGroup.getTags().stream().map(TagResponseDto::of).collect(Collectors.toList()))
 				.build();
 	}

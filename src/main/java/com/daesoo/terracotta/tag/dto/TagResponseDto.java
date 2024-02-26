@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class TagResponseDto {
-	private Long tagId;
+	private Long id;
 
     private String name;
     
     public static TagResponseDto of(Tag tag) {
     	return TagResponseDto.builder()
-    			.tagId(tag.getTagId())
+    			.id(tag.getTagId())
     			.name(tag.getName())
     			.build();
     }

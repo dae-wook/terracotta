@@ -79,6 +79,7 @@ public class CommentService {
 		if(comment.getMember().getId() != user.getId()) {
 			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
 		}
+		
 		float oldStar = comment.getStar();
 		comment.update(dto);
 		
