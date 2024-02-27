@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/schematic-posts")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:3737", "https://terracotta-nu.vercel.app/"})
 public class SchematicPostController {
 	
 	private final SchematicPostService schematicPostService;
