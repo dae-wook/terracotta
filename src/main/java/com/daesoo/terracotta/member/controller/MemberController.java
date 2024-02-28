@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
-@CrossOrigin(origins = {"http://localhost:3737", "https://terracotta-nu.vercel.app/"})
+@CrossOrigin(origins = {"http://localhost:3737", "https://terracotta-nu.vercel.app"})
 public class MemberController {
 	
 	private final MemberService memberService;

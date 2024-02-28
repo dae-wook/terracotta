@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/tag-groups")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3737", "https://terracotta-nu.vercel.app/"})
+@CrossOrigin(origins = {"http://localhost:3737", "https://terracotta-nu.vercel.app"})
 public class TagGroupController {
 	
 	private final TagGroupService tagGroupService;
