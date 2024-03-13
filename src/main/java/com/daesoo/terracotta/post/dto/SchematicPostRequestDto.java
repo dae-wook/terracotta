@@ -20,7 +20,7 @@ public class SchematicPostRequestDto {
 	
     private String title;
 
-    private String content;
+    private String description;
     
     private int price;
 

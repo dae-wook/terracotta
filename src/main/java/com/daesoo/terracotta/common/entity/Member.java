@@ -50,6 +50,9 @@ public class Member extends TimeStamp{
     
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<SchematicPost> schematicPosts;
+    
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Notification> notifications;
 
 //    public static Member create(SignupRequestDto signupRequestDto, String encodedPassword) {
 //        return Member.builder()

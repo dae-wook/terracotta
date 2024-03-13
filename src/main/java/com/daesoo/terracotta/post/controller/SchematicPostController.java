@@ -21,11 +21,13 @@ import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 import com.daesoo.terracotta.post.service.SchematicPostService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/schematic-posts")
 @RequiredArgsConstructor
 @CrossOrigin(origins = {"http://localhost:3737", "https://terracotta-nu.vercel.app"})
+@Slf4j
 public class SchematicPostController {
 	
 	private final SchematicPostService schematicPostService;
@@ -34,6 +36,12 @@ public class SchematicPostController {
 	public ResponseDto<SchematicPostResponseDto> createSchematicPost(
 			SchematicPostRequestDto schematicPostRequestDto,
 			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		log.info("title : {}", schematicPostRequestDto.getTitle());
+		log.info("content : {}", schematicPostRequestDto.getDescription());
+		log.info("price : {}", schematicPostRequestDto.getPrice());
+		log.info("file : {}", schematicPostRequestDto.getFile());
+		
 		
 		if (userDetails == null) {
 	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());

@@ -63,7 +63,7 @@ public class SchematicPost extends TimeStamp{
     public static SchematicPost create(SchematicPostRequestDto dto, String[] filePath, Member member) {
     	return SchematicPost.builder()
     			.title(dto.getTitle())
-    			.content(dto.getContent())
+    			.content(dto.getDescription())
     			.filePath(filePath[0])
     			.image(filePath[1])
     			.member(member)

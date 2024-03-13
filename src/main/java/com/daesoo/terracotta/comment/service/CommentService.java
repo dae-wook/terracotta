@@ -5,11 +5,14 @@ import org.springframework.stereotype.Service;
 import com.daesoo.terracotta.comment.dto.CommentRequestDto;
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
+import com.daesoo.terracotta.common.dto.NotificationType;
 import com.daesoo.terracotta.common.entity.Comment;
 import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.common.entity.SchematicPost;
 import com.daesoo.terracotta.common.repository.CommentRepository;
 import com.daesoo.terracotta.common.repository.SchematicPostRepository;
+import com.daesoo.terracotta.notification.NotificationService;
+import com.daesoo.terracotta.notification.dto.NotificationRequestDto;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -21,6 +24,7 @@ public class CommentService {
 	
 	private final CommentRepository commentRepository;
 	private final SchematicPostRepository schematicPostRepository;
+	private final NotificationService notificationService;
 
 	@Transactional
 	public CommentResponseDto createComment(CommentRequestDto dto, Member member) {
@@ -40,11 +44,15 @@ public class CommentService {
 			}
 		}
 		
+		
+		
 		Comment comment = Comment.create(dto, schematicPost, member);
 		
 		schematicPost.addComment(comment);
 		commentRepository.save(comment);
 		
+		//작성자에게 Notification 생성;
+		notificationService.createNotification(NotificationRequestDto.create(dto.getContent(), NotificationType.COMMENT), schematicPost.getMember());
 		
 		return CommentResponseDto.of(comment);
 	}

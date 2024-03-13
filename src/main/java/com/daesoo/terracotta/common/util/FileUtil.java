@@ -74,6 +74,7 @@ public class FileUtil {
 			}
 
 		}catch (Exception e){
+			e.printStackTrace();
 			throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
 		}
 		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
