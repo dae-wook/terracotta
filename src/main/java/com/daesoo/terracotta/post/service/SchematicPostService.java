@@ -18,6 +18,7 @@ import com.daesoo.terracotta.common.util.FileUtil;
 import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
+import com.daesoo.terracotta.post.dto.SchematicResponseDto;
 import com.daesoo.terracotta.schematic.util.Schematic;
 import com.daesoo.terracotta.schematic.util.SchemeParser;
 
@@ -47,10 +48,10 @@ public class SchematicPostService {
 		for(Tag tag: tags) {
 			schematicPost.addPostTag(tag);
 		}
-		Schematic schematic = schemParser.getSchematic(schematicPost.getFilePath());
+//		Schematic schematic = schemParser.getSchematic(schematicPost.getFilePath());
 		schematicPostRepository.save(schematicPost);
 		
-		return SchematicPostResponseDto.of(schematicPost, schematic);
+		return SchematicPostResponseDto.of(schematicPost);
 	}
 
 
@@ -58,10 +59,18 @@ public class SchematicPostService {
 		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage())
 				);
+		
+		
+		return SchematicPostResponseDto.of(schematicPost);
+	}
+	
+	public SchematicResponseDto getSchematic(Long schematicPostId) {
+		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage())
+				);
+		
 		Schematic schematic = schemParser.getSchematic(schematicPost.getFilePath());
-		
-		
-		return SchematicPostResponseDto.of(schematicPost, schematic);
+		return SchematicResponseDto.of(schematic);
 	}
 
 

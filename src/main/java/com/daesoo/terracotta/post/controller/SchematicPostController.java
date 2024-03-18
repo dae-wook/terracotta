@@ -18,6 +18,7 @@ import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
+import com.daesoo.terracotta.post.dto.SchematicResponseDto;
 import com.daesoo.terracotta.post.service.SchematicPostService;
 
 import lombok.RequiredArgsConstructor;
@@ -65,5 +66,12 @@ public class SchematicPostController {
 			@PathVariable("schematicPostId") Long schematicPostId) {
 		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematicPost(schematicPostId));
 	}
+	
+	@GetMapping("schematic/{schematicPostId}")
+	public ResponseDto<SchematicResponseDto> getSchematic(
+			@PathVariable("schematicPostId") Long schematicPostId) {
+		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematic(schematicPostId));
+	}
+	
 	
 }

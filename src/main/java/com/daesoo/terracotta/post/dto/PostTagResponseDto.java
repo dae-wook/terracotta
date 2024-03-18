@@ -15,12 +15,12 @@ public class PostTagResponseDto {
 	
 	private Long id;
 	
-	private String tagName;
+	private String name;
 	
 	public static PostTagResponseDto of(PostTag postTag) {
 		return PostTagResponseDto.builder()
 				.id(postTag.getTag().getTagId())
-				.tagName(postTag.getTag().getName())
+				.name(postTag.getTag().getName())
 				.build();
 	}
 

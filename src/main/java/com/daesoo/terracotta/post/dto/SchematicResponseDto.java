@@ -13,49 +13,13 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class SchematicPostResponseDto {
+public class SchematicResponseDto {
 
-	private Long id;
+	private Schematic schematic;
 	
-	private String title;
-	
-	private String description;
-	
-	private List<PostTagResponseDto> tags;
-	
-	private String memberName;
-	
-	private String image;
-	
-	private int buyCount;
-	
-	private int commentCount;
-	
-	private int price;
-	
-	private float star;
-	
-	private List<CommentResponseDto> comments;
-	
-	private LocalDateTime createdAt;
-	
-	private LocalDateTime modifiedAt;
-	
-	public static SchematicPostResponseDto of(SchematicPost schematicPost) {
-		return SchematicPostResponseDto.builder()
-				.id(schematicPost.getId())
-				.title(schematicPost.getTitle())
-				.description(schematicPost.getContent())
-				.buyCount(schematicPost.getBuyCount())
-				.commentCount(schematicPost.getCommentCount())
-				.price(schematicPost.getPrice())
-				.star(schematicPost.getStar())
-				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
-				.memberName(schematicPost.getMember().getMemberName())
-				.comments(schematicPost.getComments() !=null ? schematicPost.getComments().stream().map(CommentResponseDto::of).toList() : null)
-				.image(schematicPost.getImage())
-				.createdAt(schematicPost.getCreatedAt())
-				.modifiedAt(schematicPost.getModifiedAt())
+	public static SchematicResponseDto of(Schematic schematic) {
+		return SchematicResponseDto.builder()
+				.schematic(schematic)
 				.build();
 	}
 	
