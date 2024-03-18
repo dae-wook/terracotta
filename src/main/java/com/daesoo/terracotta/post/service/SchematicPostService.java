@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
@@ -76,7 +77,7 @@ public class SchematicPostService {
 
 	public Page<SchematicPostListResponseDto> getSchematicPostList(Integer page, Integer size, Long[] tags) {
 		
-		Pageable pageable = PageRequest.of(page - 1, size);
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		
 		if(tags[0] == 0) {
 			return schematicPostRepository.findAll(pageable).map(SchematicPostListResponseDto::of);

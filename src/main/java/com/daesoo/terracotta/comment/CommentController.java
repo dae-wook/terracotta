@@ -1,13 +1,17 @@
 package com.daesoo.terracotta.comment;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.daesoo.terracotta.comment.dto.CommentRequestDto;
@@ -27,10 +31,18 @@ import lombok.RequiredArgsConstructor;
 public class CommentController {
 	
 	private final CommentService commentService;
+	
+	@GetMapping("/{schematicPostId}")
+	public ResponseDto<Page<CommentResponseDto>> getComment(
+			@PathVariable("schematicPostId") Long schematicPostId,
+			@RequestParam(name="page", defaultValue = "1") Integer page,
+            @RequestParam(name="size", defaultValue = "10") Integer size) {
+		return ResponseDto.success(HttpStatus.OK, commentService.getComment(schematicPostId, page, size));
+	}
 
 	@PostMapping
 	public ResponseDto<CommentResponseDto> createComment(
-			CommentRequestDto dto,
+			@RequestBody CommentRequestDto dto,
 			@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		
 		if (userDetails == null) {

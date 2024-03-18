@@ -47,7 +47,7 @@ public class SchematicPost extends TimeStamp{
     
     private int commentCount;
     
-    private int totalStar;
+    private float totalStar;
     
     private float star;
 

@@ -1,5 +1,9 @@
 package com.daesoo.terracotta.comment.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.comment.dto.CommentRequestDto;
@@ -25,6 +29,16 @@ public class CommentService {
 	private final CommentRepository commentRepository;
 	private final SchematicPostRepository schematicPostRepository;
 	private final NotificationService notificationService;
+	
+
+
+	public Page<CommentResponseDto> getComment(Long schematicPostId, Integer page, Integer size) {
+		// TODO Auto-generated method stub
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		
+		
+		return commentRepository.findAllBySchematicPostId(schematicPostId, pageable).map(CommentResponseDto::of);
+	}
 
 	@Transactional
 	public CommentResponseDto createComment(CommentRequestDto dto, Member member) {
