@@ -21,7 +21,7 @@ import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 import com.daesoo.terracotta.post.dto.SchematicResponseDto;
 import com.daesoo.terracotta.schematic.util.Schematic;
-import com.daesoo.terracotta.schematic.util.SchemeParser;
+import com.daesoo.terracotta.schematic.util.SchemeParser2;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -35,7 +35,7 @@ public class SchematicPostService {
 	private final PostTagRepository postTagRepository;
 	private final TagRepository tagRepository;
 	private final FileUtil fileUtil;
-	private final SchemeParser schemParser;
+	private final SchemeParser2 schemParser;
 
 	
 	@Transactional

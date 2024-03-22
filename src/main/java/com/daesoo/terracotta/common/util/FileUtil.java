@@ -1,7 +1,11 @@
 package com.daesoo.terracotta.common.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -127,6 +131,29 @@ public class FileUtil {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public File downloadSchematicFileToFile(String fileName) {
+	    try {
+	        InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+
+	        Storage storage = StorageOptions.newBuilder().setProjectId(gcpProjectId).setCredentials(GoogleCredentials.fromStream(inputStream)).build().getService();
+	        byte[] content = storage.readAllBytes(gcpBucketId, "schematics/" + fileName);
+
+	        // Create a temporary file to write the content
+	        Path tempFilePath = Files.createTempFile("temp-", ".schematic");
+	        File tempFile = tempFilePath.toFile();
+
+	        // Write content to the temporary file
+	        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+	            fos.write(content);
+	        }
+
+	        return tempFile;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return null;
 	}
 
 
