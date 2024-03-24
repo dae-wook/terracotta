@@ -83,7 +83,7 @@ public class FileUtil {
 
 	private String checkFileExtension(String fileName) {
 		if(fileName != null && fileName.contains(".")){
-			String[] extensionList = {".schem", ".litematic"};
+			String[] extensionList = {".schem", ".litematic", ".schematic"};
 
 			for(String extension: extensionList) {
 				if (fileName.endsWith(extension)) {

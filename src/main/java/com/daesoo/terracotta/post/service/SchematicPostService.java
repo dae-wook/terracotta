@@ -1,6 +1,7 @@
 package com.daesoo.terracotta.post.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,8 +20,7 @@ import com.daesoo.terracotta.common.util.FileUtil;
 import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
-import com.daesoo.terracotta.post.dto.SchematicResponseDto;
-import com.daesoo.terracotta.schematic.util.Schematic;
+import com.daesoo.terracotta.schematic.util.SchematicDto;
 import com.daesoo.terracotta.schematic.util.SchemeParser;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -65,13 +65,13 @@ public class SchematicPostService {
 		return SchematicPostResponseDto.of(schematicPost);
 	}
 	
-	public SchematicResponseDto getSchematic(Long schematicPostId) {
+	public SchematicDto getSchematic(Long schematicPostId) {
 		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage())
 				);
 		
-		Schematic schematic = schemParser.getSchematic(schematicPost.getFilePath());
-		return SchematicResponseDto.of(schematic);
+		
+		return schemParser.getSchematic(schematicPost.getFilePath());
 	}
 
 
@@ -84,6 +84,24 @@ public class SchematicPostService {
 		}
 
 		return postTagRepository.findPostsByTags(pageable, tags, tags.length).map(SchematicPostListResponseDto::of);
+	}
+
+
+	@Transactional
+	public Boolean deleteSchematic(Long schematicPostId, Member user) {
+		// TODO Auto-generated method stub
+		
+		SchematicPost schematic = schematicPostRepository.findById(schematicPostId).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage())
+				);
+		
+		if(schematic.getMember().getId() != user.getId()) {
+			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
+		}
+		
+		schematicPostRepository.delete(schematic);
+		
+		return true;
 	}
 
 }

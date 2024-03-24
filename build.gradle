@@ -47,6 +47,8 @@ dependencies {
 	
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	
+	implementation 'net.sandrohc:schematic4j:1.1.0'
+	
 	
 }
 

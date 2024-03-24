@@ -1,12 +1,6 @@
 package com.daesoo.terracotta.post.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import com.daesoo.terracotta.comment.dto.CommentResponseDto;
-import com.daesoo.terracotta.common.entity.PostTag;
-import com.daesoo.terracotta.common.entity.SchematicPost;
-import com.daesoo.terracotta.schematic.util.Schematic;
+import com.daesoo.terracotta.schematic.util.SchematicDto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -15,9 +9,9 @@ import lombok.Getter;
 @Builder
 public class SchematicResponseDto {
 
-	private Schematic schematic;
+	private SchematicDto schematic;
 	
-	public static SchematicResponseDto of(Schematic schematic) {
+	public static SchematicResponseDto of(SchematicDto schematic) {
 		return SchematicResponseDto.builder()
 				.schematic(schematic)
 				.build();

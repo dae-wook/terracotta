@@ -6,7 +6,7 @@ import java.util.List;
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
 import com.daesoo.terracotta.common.entity.PostTag;
 import com.daesoo.terracotta.common.entity.SchematicPost;
-import com.daesoo.terracotta.schematic.util.Schematic;
+import com.daesoo.terracotta.schematic.util.SchematicDto;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,8 +19,8 @@ import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
-import com.daesoo.terracotta.post.dto.SchematicResponseDto;
 import com.daesoo.terracotta.post.service.SchematicPostService;
+import com.daesoo.terracotta.schematic.util.SchematicDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,9 +69,17 @@ public class SchematicPostController {
 	}
 	
 	@GetMapping("schematic/{schematicPostId}")
-	public ResponseDto<SchematicResponseDto> getSchematic(
+	public ResponseDto<SchematicDto> getSchematic(
 			@PathVariable("schematicPostId") Long schematicPostId) {
 		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematic(schematicPostId));
+	}
+	
+	@DeleteMapping("{schematicPostId}")
+	public ResponseDto<Boolean> deleteSchematic(
+			@PathVariable("schematicPostId") Long schematicPostId,
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		return ResponseDto.success(HttpStatus.OK, schematicPostService.deleteSchematic(schematicPostId, userDetails.getUser()));
 	}
 	
 	
