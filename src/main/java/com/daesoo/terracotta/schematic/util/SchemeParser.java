@@ -1,5 +1,6 @@
 package com.daesoo.terracotta.schematic.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -8,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.jnbt.Tag;
 import org.springframework.stereotype.Component;
 
 import com.daesoo.terracotta.common.util.FileUtil;
@@ -61,6 +61,44 @@ public class SchemeParser {
 	    }
 
 	    return schematicDto;
+	}
+
+	public String convertFileToSchematicJson(byte[] bytes) {
+	    String schematicJson = "";
+	    try (InputStream fis = new ByteArrayInputStream(bytes)) {
+	        Schematic schematic = SchematicLoader.load(fis);
+
+	        Map<String, List<int[]>> blockMap = new HashMap<>();
+	        
+	        // 블록맵 구축
+	        for (SchematicBlockPos pos : schematic.blocks().map(Pair::left).collect(Collectors.toList())) {
+	            SchematicBlock block = schematic.block(pos);
+	            if(block.name.equals("minecraft:air")) continue;
+	            String name = block.name.split(":")[1];
+	            blockMap.computeIfAbsent(name, k -> new ArrayList<>())
+	                    .add(new int[]{pos.x, pos.y, pos.z});
+	        }
+
+
+	        ObjectMapper mapper = new ObjectMapper();
+	        String json = mapper.writeValueAsString(blockMap);
+
+	        SchematicDto schematicDto = SchematicDto.builder()
+	                .width(schematic.width())
+	                .height(schematic.height())
+	                .length(schematic.length())
+	                .blockData(GzipWraper.compress(json))
+//	                .blockData(json)
+	                .build();
+	        
+
+	        schematicJson = mapper.writeValueAsString(schematicDto);
+
+	    } catch (ParsingException | IOException e) {
+	        e.printStackTrace();
+	    }
+
+	    return schematicJson;
 	}
 	
 }

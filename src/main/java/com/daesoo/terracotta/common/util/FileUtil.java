@@ -2,6 +2,7 @@ package com.daesoo.terracotta.common.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.daesoo.terracotta.schematic.util.SchematicDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
@@ -36,7 +39,7 @@ public class FileUtil {
 	@Value("${GCP_DIR_NAME}")
 	private String directory;
 
-	public String[] uploadFile(MultipartFile schematic, MultipartFile image) {
+	public String[] uploadFile(String schematicJson, MultipartFile schematic ,MultipartFile image) {
 
 		try{
 
@@ -47,7 +50,7 @@ public class FileUtil {
 			String imageFileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
 
 			log.debug("업로드 시작");
-			byte[] schematicFileData = schematic.getBytes();
+			byte[] schematicFileData = schematicJson.getBytes();
 			byte[] imageFileData = image.getBytes();
 
 			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
@@ -88,7 +91,7 @@ public class FileUtil {
 			for(String extension: extensionList) {
 				if (fileName.endsWith(extension)) {
 					log.debug("허용된 파일 확장자 : {}", extension);
-					return extension;
+					return ".json";
 				}
 			}
 		}
@@ -122,6 +125,27 @@ public class FileUtil {
 
 
 			return new ByteArrayInputStream(content);
+
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public SchematicDto downloadSchematicFileToSchematicDto(String fileName) {
+		try {
+			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+
+
+			Storage storage = StorageOptions.newBuilder().setProjectId(gcpProjectId).setCredentials(GoogleCredentials.fromStream(inputStream)).build().getService();
+			byte[] content = storage.readAllBytes(gcpBucketId, "schematics/" + fileName);
+			
+			
+			ObjectMapper mapper = new ObjectMapper();
+            SchematicDto schematicDto = mapper.readValue(new String(content, StandardCharsets.UTF_8), SchematicDto.class);
+			
+			
+			return schematicDto;
 
 		}catch (Exception e) {
 			e.printStackTrace();

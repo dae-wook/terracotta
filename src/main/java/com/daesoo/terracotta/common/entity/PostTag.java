@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class PostTag {
+public class PostTag extends TimeStamp{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

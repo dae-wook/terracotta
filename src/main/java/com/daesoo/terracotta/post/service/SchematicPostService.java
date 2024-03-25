@@ -1,5 +1,6 @@
 package com.daesoo.terracotta.post.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +43,16 @@ public class SchematicPostService {
 	public SchematicPostResponseDto createSchematicPost(SchematicPostRequestDto schematicPostRequestDto, Member member) {
 		
 
-		String[] filePath = fileUtil.uploadFile(schematicPostRequestDto.getFile(),schematicPostRequestDto.getImage());
+		String schematicJson ="";
+		String originalFilename = schematicPostRequestDto.getFile().getOriginalFilename();
+		try {
+			schematicJson = schemParser.convertFileToSchematicJson(schematicPostRequestDto.getFile().getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String[] filePath = fileUtil.uploadFile(schematicJson, schematicPostRequestDto.getFile(), schematicPostRequestDto.getImage());
+		
+//		System.out.println(schematicJson);
 		SchematicPost schematicPost = SchematicPost.create(schematicPostRequestDto, filePath, member);
 		
 		List<Tag> tags = tagRepository.findAllById(schematicPostRequestDto.getTags());
@@ -71,7 +81,7 @@ public class SchematicPostService {
 				);
 		
 		
-		return schemParser.getSchematic(schematicPost.getFilePath());
+		return fileUtil.downloadSchematicFileToSchematicDto(schematicPost.getFilePath());
 	}
 
 

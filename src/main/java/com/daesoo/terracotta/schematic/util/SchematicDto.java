@@ -24,6 +24,4 @@ public class SchematicDto {
 	private int height;
 	private int length;
 	byte[] blockData;
-//	String blockData;
-//	List<CustomPair<SchematicBlockPos, SchematicBlock>> blockList;
 }
