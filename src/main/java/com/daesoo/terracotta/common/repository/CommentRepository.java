@@ -10,7 +10,7 @@ import com.daesoo.terracotta.common.entity.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Long>{
 
-	List<Comment> findByMemberId(Long id);
+	Page<Comment> findByMemberId(Pageable pageable, Long id);
 
 	Page<Comment> findAllBySchematicPostId(Long schematicPostId, Pageable pageable);
 
