@@ -77,6 +77,16 @@ public class SchematicPost extends TimeStamp{
         tag.getPostTags().add(postTag);
     }
     
+    public void addPostTags(List<Tag> tags) {
+    	postTags.clear();
+    	for(Tag tag : tags) {
+    		PostTag postTag = PostTag.create(this, tag);
+    		postTags.add(postTag);
+    		
+    		tag.getPostTags().add(postTag);
+    	}
+    }
+    
     public void addComment(Comment comment) {
     	this.commentCount++;
     	this.totalStar += comment.getStar();
@@ -95,6 +105,16 @@ public class SchematicPost extends TimeStamp{
 		this.totalStar -= oldStar;
     	this.totalStar += comment.getStar();
     	this.star = Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
+		
+	}
+
+	public void update(SchematicPostRequestDto schematicPostRequestDto, String[] filePath) {
+
+		this.title = schematicPostRequestDto.getTitle() != null ? schematicPostRequestDto.getTitle() : this.title;
+		this.content = schematicPostRequestDto.getDescription() != null ? schematicPostRequestDto.getDescription() : this.content;
+		this.price = schematicPostRequestDto.getPrice() != null ? schematicPostRequestDto.getPrice() : this.price;
+		this.filePath = filePath[0] != null ? filePath[0] : this.filePath;
+		this.image = filePath[1] != null ? filePath[1] : this.image;
 		
 	}
 

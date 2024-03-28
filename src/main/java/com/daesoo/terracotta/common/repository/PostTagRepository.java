@@ -23,5 +23,8 @@ public interface PostTagRepository extends JpaRepository<PostTag, Long>{
     @Query("select distinct pt.schematicPost from post_tags pt where pt.tag.id in :tagIds group by pt.schematicPost having count(distinct pt.tag) = :tagCount")
     Page<SchematicPost> findPostsByTags(Pageable pageable, @Param("tagIds") Long[] tagIds, @Param("tagCount") int tagCount);
 
+
+	List<PostTag> findAllBySchematicPostId(Long schematicPostId);
+
 	
 }

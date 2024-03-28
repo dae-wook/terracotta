@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
@@ -70,19 +72,24 @@ public class SchemeParser {
 
 	        Map<String, List<int[]>> blockMap = new HashMap<>();
 	        
+
+	        
 	        // 블록맵 구축
-	        for (SchematicBlockPos pos : schematic.blocks().map(Pair::left).collect(Collectors.toList())) {
-	            SchematicBlock block = schematic.block(pos);
+	        for (Pair<SchematicBlockPos, SchematicBlock> pair : schematic.blocks().toList()) {
+	        	SchematicBlockPos pos = pair.left;
+	            SchematicBlock block = pair.right;
 	            if(block.name.equals("minecraft:air")) continue;
 	            String name = block.name.split(":")[1];
 	            blockMap.computeIfAbsent(name, k -> new ArrayList<>())
 	                    .add(new int[]{pos.x, pos.y, pos.z});
 	        }
-
+	        if (blockMap.size() < 1) {
+	        	throw new IllegalArgumentException("dd");
+	        }
 
 	        ObjectMapper mapper = new ObjectMapper();
 	        String json = mapper.writeValueAsString(blockMap);
-
+	        	
 	        SchematicDto schematicDto = SchematicDto.builder()
 	                .width(schematic.width())
 	                .height(schematic.height())

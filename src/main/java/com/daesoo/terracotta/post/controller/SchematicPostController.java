@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,17 +40,24 @@ public class SchematicPostController {
 			SchematicPostRequestDto schematicPostRequestDto,
 			@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		
-		log.info("title : {}", schematicPostRequestDto.getTitle());
-		log.info("content : {}", schematicPostRequestDto.getDescription());
-		log.info("price : {}", schematicPostRequestDto.getPrice());
-		log.info("file : {}", schematicPostRequestDto.getFile());
-		
-		
 		if (userDetails == null) {
 	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
 	    }
 		
 		return ResponseDto.success(HttpStatus.OK, schematicPostService.createSchematicPost(schematicPostRequestDto, userDetails.getUser()));
+	}
+	
+	@PutMapping("{schematicPostId}")
+	public ResponseDto<SchematicPostResponseDto> updateSchematicPost(
+			@PathVariable("schematicPostId") Long schematicPostId,
+			SchematicPostRequestDto schematicPostRequestDto,
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, schematicPostService.updateSchematicPost(schematicPostId, schematicPostRequestDto, userDetails.getUser()));
 	}
 	
 	@GetMapping

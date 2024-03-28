@@ -1,8 +1,9 @@
 package com.daesoo.terracotta.post.service;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.entity.Member;
+import com.daesoo.terracotta.common.entity.PostTag;
 import com.daesoo.terracotta.common.entity.SchematicPost;
 import com.daesoo.terracotta.common.entity.Tag;
 import com.daesoo.terracotta.common.repository.PostTagRepository;
@@ -52,19 +54,78 @@ public class SchematicPostService {
 		}
 		String[] filePath = fileUtil.uploadFile(schematicJson, schematicPostRequestDto.getFile(), schematicPostRequestDto.getImage());
 		
-//		System.out.println(schematicJson);
 		SchematicPost schematicPost = SchematicPost.create(schematicPostRequestDto, filePath, member);
 		
 		List<Tag> tags = tagRepository.findAllById(schematicPostRequestDto.getTags());
 		for(Tag tag: tags) {
 			schematicPost.addPostTag(tag);
 		}
-//		Schematic schematic = schemParser.getSchematic(schematicPost.getFilePath());
 		schematicPostRepository.save(schematicPost);
 		
 		return SchematicPostResponseDto.of(schematicPost);
 	}
+	
+	@Transactional
+	public SchematicPostResponseDto updateSchematicPost(Long schematicPostId, SchematicPostRequestDto schematicPostRequestDto, Member member) {
+		
+		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId)
+				.orElseThrow( () -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage()));
+		
+		if(schematicPost.getMember().getId() != member.getId()) {
+			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
+		}
+		
+		String schematicJson ="";
+		String[] filePath = new String[2];
+		if(schematicPostRequestDto.getFile() != null) {
+			try {
+				schematicJson = schemParser.convertFileToSchematicJson(schematicPostRequestDto.getFile().getBytes());
+				filePath[0] = fileUtil.updateSchematic(schematicJson, schematicPostRequestDto.getFile());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(schematicPostRequestDto.getImage() != null) {
+			filePath[1] = fileUtil.updateImage(schematicPostRequestDto.getImage());
+		}
+		
+		schematicPost.update(schematicPostRequestDto, filePath);
+		
+		List<PostTag> postTags = postTagRepository.findAllBySchematicPostId(schematicPostId);
+		
+		
+		List<Tag> tags = tagRepository.findAllById(schematicPostRequestDto.getTags());
+		if (!compareTag(postTags, tags)) {
+			postTagRepository.deleteAll(postTags);
+			schematicPost.addPostTags(tags);
+		}
+		
+		
+		return SchematicPostResponseDto.of(schematicPost);
+	}
 
+
+	private boolean compareTag(List<PostTag> postTags, List<Tag> tags) {
+
+		if(postTags.size() != tags.size()) return false;
+		
+	    // 포스트 태그의 ID를 저장할 셋을 생성
+	    Set<Long> postTagIds = new HashSet<>();
+	    for (PostTag postTag : postTags) {
+	        postTagIds.add(postTag.getTag().getTagId());
+	    }
+
+	    // 비교할 태그 리스트를 순회하면서 포스트 태그의 ID와 비교
+	    for (Tag tag : tags) {
+	        if (!postTagIds.contains(tag.getTagId())) {
+	            // 포스트 태그의 ID와 일치하는 태그가 없으면 false 반환
+	            return false;
+	        }
+	    }
+		
+		return true;
+	}
 
 	public SchematicPostResponseDto getSchematicPost(Long schematicPostId) {
 		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId).orElseThrow(

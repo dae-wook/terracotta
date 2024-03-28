@@ -82,6 +82,84 @@ public class FileUtil {
 		}
 		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
 	}
+	
+	public String updateSchematic(String schematicJson, MultipartFile schematic) {
+
+		try{
+
+			String originalSchematicFileName = schematic.getOriginalFilename();
+			String fileName = originalSchematicFileName.substring(0, originalSchematicFileName.lastIndexOf('.'));
+
+
+			log.debug("업로드 시작");
+			byte[] schematicFileData = schematicJson.getBytes();
+
+			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+
+			StorageOptions options = StorageOptions.newBuilder().setProjectId(gcpProjectId)
+					.setCredentials(GoogleCredentials.fromStream(inputStream)).build();
+
+			Storage storage = options.getService();
+			Bucket schematicBucket = storage.get(gcpBucketId,Storage.BucketGetOption.fields());
+
+			Instant instant = Instant.now();
+			long currentTimeMillis = instant.toEpochMilli();
+
+			String saveSchematicFileName = fileName + "-s" + currentTimeMillis + checkFileExtension(originalSchematicFileName);
+			
+
+			Blob schematicBlob = schematicBucket.create(directory + "/" + saveSchematicFileName, schematicFileData, schematic.getContentType());
+			
+
+			if(schematicBlob != null){
+				log.debug("업로드 성공");
+				return saveSchematicFileName;
+			}
+
+		}catch (Exception e){
+			e.printStackTrace();
+			throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+		}
+		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+	}
+	
+	public String updateImage(MultipartFile image) {
+
+		try{
+
+
+			String originalImageFileName = image.getOriginalFilename();
+			String imageFileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
+
+			log.debug("업로드 시작");
+			byte[] imageFileData = image.getBytes();
+
+			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+
+			StorageOptions options = StorageOptions.newBuilder().setProjectId(gcpProjectId)
+					.setCredentials(GoogleCredentials.fromStream(inputStream)).build();
+
+			Storage storage = options.getService();
+			Bucket imageBucket = storage.get(gcpBucketImageId,Storage.BucketGetOption.fields());
+
+			Instant instant = Instant.now();
+			long currentTimeMillis = instant.toEpochMilli();
+
+			String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
+
+			Blob imageBlob = imageBucket.create("schematic/thumbs/" + saveImageFileName, imageFileData, image.getContentType());
+
+			if(imageBlob != null){
+				log.debug("업로드 성공");
+				return saveImageFileName;
+			}
+
+		}catch (Exception e){
+			e.printStackTrace();
+			throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+		}
+		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+	}
 
 
 	private String checkFileExtension(String fileName) {
@@ -143,8 +221,7 @@ public class FileUtil {
 			
 			ObjectMapper mapper = new ObjectMapper();
             SchematicDto schematicDto = mapper.readValue(new String(content, StandardCharsets.UTF_8), SchematicDto.class);
-			
-			
+            
 			return schematicDto;
 
 		}catch (Exception e) {

@@ -22,7 +22,7 @@ public class SchematicPostRequestDto {
 
     private String description;
     
-    private int price;
+    private Integer price;
 
     private ArrayList<Long> tags;
     
