@@ -90,13 +90,13 @@ public class SchematicPost extends TimeStamp{
     public void addComment(Comment comment) {
     	this.commentCount++;
     	this.totalStar += comment.getStar();
-    	this.star = Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
+    	this.star = averageStar();
     }
 
 	public void deleteComment(Comment comment) {
 		this.commentCount--;
     	this.totalStar -= comment.getStar();
-    	this.star = Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
+    	this.star = averageStar();
 		
 	}
 
@@ -104,7 +104,7 @@ public class SchematicPost extends TimeStamp{
 		// TODO Auto-generated method stub
 		this.totalStar -= oldStar;
     	this.totalStar += comment.getStar();
-    	this.star = Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
+    	this.star = averageStar();
 		
 	}
 
@@ -116,6 +116,10 @@ public class SchematicPost extends TimeStamp{
 		this.filePath = filePath[0] != null ? filePath[0] : this.filePath;
 		this.image = filePath[1] != null ? filePath[1] : this.image;
 		
+	}
+	
+	public float averageStar() {
+		return Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
 	}
 
 }
