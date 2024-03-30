@@ -81,7 +81,7 @@ public class SchemeParser {
 	            if(block.name.equals("minecraft:air")) continue;
 	            String name = block.name.split(":")[1];
 	            blockMap.computeIfAbsent(name, k -> new ArrayList<>())
-	                    .add(new int[]{pos.x, pos.y, pos.z});
+	                    .add(new int[]{convertPositive(pos.x), convertPositive(pos.y), convertPositive(pos.z)});
 	        }
 	        if (blockMap.size() < 1) {
 	        	throw new IllegalArgumentException("dd");
@@ -106,6 +106,13 @@ public class SchemeParser {
 	    }
 
 	    return schematicJson;
+	}
+	
+	private int convertPositive(int position) {
+		if (position < 0) {
+			return position * -1;
+		}
+		return position;
 	}
 	
 }
