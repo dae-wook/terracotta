@@ -118,7 +118,7 @@ public class SchematicPost extends TimeStamp{
 		
 	}
 	
-	public float averageStar() {
+	private float averageStar() {
 		return Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
 	}
 
