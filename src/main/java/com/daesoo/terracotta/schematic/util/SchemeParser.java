@@ -65,21 +65,24 @@ public class SchemeParser {
 	    return schematicDto;
 	}
 
-	public String convertFileToSchematicJson(byte[] bytes) {
-	    String schematicJson = "";
+	public SchematicDto convertFileToSchematicJson(byte[] bytes) {
+		SchematicDto schematicDto = new SchematicDto();
 	    try (InputStream fis = new ByteArrayInputStream(bytes)) {
 	        Schematic schematic = SchematicLoader.load(fis);
 
 	        Map<String, List<int[]>> blockMap = new HashMap<>();
 	        
-
+	        int blockCount = 0;
 	        
 	        // 블록맵 구축
 	        for (Pair<SchematicBlockPos, SchematicBlock> pair : schematic.blocks().toList()) {
 	        	SchematicBlockPos pos = pair.left;
 	            SchematicBlock block = pair.right;
-	            if(block.name.equals("minecraft:air")) continue;
+	            if(block.name.equals("minecraft:air")) {
+	            	continue;
+	            }
 	            String name = block.name.split(":")[1];
+	            blockCount++;
 	            blockMap.computeIfAbsent(name, k -> new ArrayList<>())
 	                    .add(new int[]{convertPositive(pos.x), convertPositive(pos.y), convertPositive(pos.z)});
 	        }
@@ -89,23 +92,23 @@ public class SchemeParser {
 
 	        ObjectMapper mapper = new ObjectMapper();
 	        String json = mapper.writeValueAsString(blockMap);
-	        	
-	        SchematicDto schematicDto = SchematicDto.builder()
+	        
+	        schematicDto = SchematicDto.builder()
 	                .width(schematic.width())
 	                .height(schematic.height())
 	                .length(schematic.length())
 	                .blockData(GzipWraper.compress(json))
-//	                .blockData(json)
+	                .size(blockCount)
 	                .build();
 	        
 
-	        schematicJson = mapper.writeValueAsString(schematicDto);
+//	        schematicDto = mapper.writeValueAsString(schematicDto);
 
 	    } catch (ParsingException | IOException e) {
 	        e.printStackTrace();
 	    }
 
-	    return schematicJson;
+	    return schematicDto;
 	}
 	
 	private int convertPositive(int position) {

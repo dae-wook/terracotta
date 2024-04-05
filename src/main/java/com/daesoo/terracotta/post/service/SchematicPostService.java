@@ -45,16 +45,20 @@ public class SchematicPostService {
 	public SchematicPostResponseDto createSchematicPost(SchematicPostRequestDto schematicPostRequestDto, Member member) {
 		
 
-		String schematicJson ="";
+		SchematicDto schematicDto = new SchematicDto();
 		String originalFilename = schematicPostRequestDto.getFile().getOriginalFilename();
 		try {
-			schematicJson = schemParser.convertFileToSchematicJson(schematicPostRequestDto.getFile().getBytes());
+			schematicDto = schemParser.convertFileToSchematicJson(schematicPostRequestDto.getFile().getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		String[] filePath = fileUtil.uploadFile(schematicJson, schematicPostRequestDto.getFile(), schematicPostRequestDto.getImage());
 		
-		SchematicPost schematicPost = SchematicPost.create(schematicPostRequestDto, filePath, member);
+
+		String schematicJson ="";
+		
+		String[] filePath = fileUtil.uploadFile(schematicDto, schematicPostRequestDto.getFile(), schematicPostRequestDto.getImage());
+		
+		SchematicPost schematicPost = SchematicPost.create(schematicPostRequestDto, schematicDto, filePath, member);
 		
 		List<Tag> tags = tagRepository.findAllById(schematicPostRequestDto.getTags());
 		for(Tag tag: tags) {
@@ -71,16 +75,17 @@ public class SchematicPostService {
 		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId)
 				.orElseThrow( () -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage()));
 		
+		SchematicDto schematicDto = null;
+		
 		if(schematicPost.getMember().getId() != member.getId()) {
 			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
 		}
 		
-		String schematicJson ="";
 		String[] filePath = new String[2];
 		if(schematicPostRequestDto.getFile() != null) {
 			try {
-				schematicJson = schemParser.convertFileToSchematicJson(schematicPostRequestDto.getFile().getBytes());
-				filePath[0] = fileUtil.updateSchematic(schematicJson, schematicPostRequestDto.getFile());
+				schematicDto = schemParser.convertFileToSchematicJson(schematicPostRequestDto.getFile().getBytes());
+				filePath[0] = fileUtil.updateSchematic(schematicDto, schematicPostRequestDto.getFile());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -90,7 +95,7 @@ public class SchematicPostService {
 			filePath[1] = fileUtil.updateImage(schematicPostRequestDto.getImage());
 		}
 		
-		schematicPost.update(schematicPostRequestDto, filePath);
+		schematicPost.update(schematicPostRequestDto, schematicDto, filePath);
 		
 		List<PostTag> postTags = postTagRepository.findAllBySchematicPostId(schematicPostId);
 		

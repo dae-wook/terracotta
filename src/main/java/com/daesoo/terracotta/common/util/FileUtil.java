@@ -39,10 +39,13 @@ public class FileUtil {
 	@Value("${GCP_DIR_NAME}")
 	private String directory;
 
-	public String[] uploadFile(String schematicJson, MultipartFile schematic ,MultipartFile image) {
+	public String[] uploadFile(SchematicDto schematicDto, MultipartFile schematic ,MultipartFile image) {
 
 		try{
 
+			ObjectMapper mapper = new ObjectMapper();
+			String schematicJson = mapper.writeValueAsString(schematicDto);
+			
 			String originalSchematicFileName = schematic.getOriginalFilename();
 			String fileName = originalSchematicFileName.substring(0, originalSchematicFileName.lastIndexOf('.'));
 
@@ -83,9 +86,11 @@ public class FileUtil {
 		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
 	}
 	
-	public String updateSchematic(String schematicJson, MultipartFile schematic) {
+	public String updateSchematic(SchematicDto schematicDto, MultipartFile schematic) {
 
 		try{
+			ObjectMapper mapper = new ObjectMapper();
+			String schematicJson = mapper.writeValueAsString(schematicDto);
 
 			String originalSchematicFileName = schematic.getOriginalFilename();
 			String fileName = originalSchematicFileName.substring(0, originalSchematicFileName.lastIndexOf('.'));

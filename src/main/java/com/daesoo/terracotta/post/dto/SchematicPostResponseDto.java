@@ -35,6 +35,8 @@ public class SchematicPostResponseDto {
 	
 	private float star;
 	
+	private int size;
+	
 	private LocalDateTime createdAt;
 	
 	private LocalDateTime modifiedAt;
@@ -48,6 +50,7 @@ public class SchematicPostResponseDto {
 				.commentCount(schematicPost.getCommentCount())
 				.price(schematicPost.getPrice())
 				.star(schematicPost.getStar())
+				.size(schematicPost.getSize())
 				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
 				.memberName(schematicPost.getMember().getMemberName())
 				.image(schematicPost.getImage())

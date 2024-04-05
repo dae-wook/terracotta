@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
+import com.daesoo.terracotta.schematic.util.SchematicDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -47,6 +48,8 @@ public class SchematicPost extends TimeStamp{
     
     private int commentCount;
     
+    private int size;
+    
     private float totalStar;
     
     private float star;
@@ -60,10 +63,11 @@ public class SchematicPost extends TimeStamp{
     @ManyToOne
     private Member member;
     
-    public static SchematicPost create(SchematicPostRequestDto dto, String[] filePath, Member member) {
+    public static SchematicPost create(SchematicPostRequestDto dto, SchematicDto schematicDto, String[] filePath, Member member) {
     	return SchematicPost.builder()
     			.title(dto.getTitle())
     			.content(dto.getDescription())
+    			.size(schematicDto.getSize())
     			.filePath(filePath[0])
     			.image(filePath[1])
     			.member(member)
@@ -108,12 +112,13 @@ public class SchematicPost extends TimeStamp{
 		
 	}
 
-	public void update(SchematicPostRequestDto schematicPostRequestDto, String[] filePath) {
+	public void update(SchematicPostRequestDto schematicPostRequestDto, SchematicDto schematicDto, String[] filePath) {
 
 		this.title = schematicPostRequestDto.getTitle() != null ? schematicPostRequestDto.getTitle() : this.title;
 		this.content = schematicPostRequestDto.getDescription() != null ? schematicPostRequestDto.getDescription() : this.content;
 		this.price = schematicPostRequestDto.getPrice() != null ? schematicPostRequestDto.getPrice() : this.price;
 		this.filePath = filePath[0] != null ? filePath[0] : this.filePath;
+		this.size = schematicDto != null ? schematicDto.getSize() : this.size;
 		this.image = filePath[1] != null ? filePath[1] : this.image;
 		
 	}

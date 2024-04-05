@@ -23,5 +23,6 @@ public class SchematicDto {
 	private int width;
 	private int height;
 	private int length;
+	private int size;
 	byte[] blockData;
 }
