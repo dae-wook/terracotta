@@ -38,6 +38,9 @@ public class FileUtil {
 
 	@Value("${GCP_DIR_NAME}")
 	private String directory;
+	
+	@Value("${GCP_IMAGE_DIR_NAME}")
+	private String imageDirectory;
 
 	public String[] uploadFile(SchematicDto schematicDto, MultipartFile schematic ,MultipartFile image) {
 
@@ -72,7 +75,7 @@ public class FileUtil {
 			String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
 
 			Blob schematicBlob = schematicBucket.create(directory + "/" + saveSchematicFileName, schematicFileData, schematic.getContentType());
-			Blob imageBlob = imageBucket.create("schematic/thumbs/" + saveImageFileName, imageFileData, image.getContentType());
+			Blob imageBlob = imageBucket.create(imageDirectory + "/" + saveImageFileName, imageFileData, image.getContentType());
 
 			if(schematicBlob != null && imageBlob != null){
 				log.debug("업로드 성공");
@@ -128,10 +131,38 @@ public class FileUtil {
 		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
 	}
 	
-	public String updateImage(MultipartFile image) {
+	public void deleteImages(String[] fileNames) {
+	    try {
+	        InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+
+	        StorageOptions options = StorageOptions.newBuilder()
+	            .setProjectId(gcpProjectId)
+	            .setCredentials(GoogleCredentials.fromStream(inputStream))
+	            .build();
+
+	        Storage storage = options.getService();
+	        Bucket imageBucket = storage.get(gcpBucketImageId, Storage.BucketGetOption.fields());
+
+	        for (String fileName : fileNames) {
+	            Blob imageBlob = imageBucket.get(imageDirectory + "/" + fileName);
+	            if (imageBlob != null) {
+	                imageBlob.delete();
+	                log.debug("이미지 {} 삭제 성공", fileName);
+	            } else {
+	                log.warn("이미지 {} 찾을 수 없음", fileName);
+	            }
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new IllegalArgumentException("Error occurred while deleting files from GCS");
+	    }
+	}
+	
+	public String updateImage(MultipartFile image, String oldImageName) {
 
 		try{
-
+			
 
 			String originalImageFileName = image.getOriginalFilename();
 			String imageFileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
@@ -152,9 +183,11 @@ public class FileUtil {
 
 			String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
 
-			Blob imageBlob = imageBucket.create("schematic/thumbs/" + saveImageFileName, imageFileData, image.getContentType());
-
+			Blob imageBlob = imageBucket.create(imageDirectory + "/" + saveImageFileName, imageFileData, image.getContentType());
 			if(imageBlob != null){
+
+				String[] oldImages = new String[] {oldImageName};
+				deleteImages(oldImages);
 				log.debug("업로드 성공");
 				return saveImageFileName;
 			}

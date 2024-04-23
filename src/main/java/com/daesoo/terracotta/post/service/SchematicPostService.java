@@ -92,7 +92,7 @@ public class SchematicPostService {
 		}
 		
 		if(schematicPostRequestDto.getImage() != null) {
-			filePath[1] = fileUtil.updateImage(schematicPostRequestDto.getImage());
+			filePath[1] = fileUtil.updateImage(schematicPostRequestDto.getImage(), schematicPost.getImage());
 		}
 		
 		schematicPost.update(schematicPostRequestDto, schematicDto, filePath);
