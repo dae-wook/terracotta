@@ -28,6 +28,6 @@ public class SchematicPostRequestDto {
     
     private MultipartFile file;
     
-    private MultipartFile image;
+    private MultipartFile[] images;
 	
 }

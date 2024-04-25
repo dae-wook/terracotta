@@ -4,12 +4,16 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.daesoo.terracotta.common.entity.Image;
+import com.daesoo.terracotta.post.dto.FileNameDto;
 import com.daesoo.terracotta.schematic.util.SchematicDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -42,7 +46,7 @@ public class FileUtil {
 	@Value("${GCP_IMAGE_DIR_NAME}")
 	private String imageDirectory;
 
-	public String[] uploadFile(SchematicDto schematicDto, MultipartFile schematic ,MultipartFile image) {
+	public FileNameDto uploadFile(SchematicDto schematicDto, MultipartFile schematic ,MultipartFile[] images) {
 
 		try{
 
@@ -52,12 +56,9 @@ public class FileUtil {
 			String originalSchematicFileName = schematic.getOriginalFilename();
 			String fileName = originalSchematicFileName.substring(0, originalSchematicFileName.lastIndexOf('.'));
 
-			String originalImageFileName = image.getOriginalFilename();
-			String imageFileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
 
 			log.debug("업로드 시작");
 			byte[] schematicFileData = schematicJson.getBytes();
-			byte[] imageFileData = image.getBytes();
 
 			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
 
@@ -67,19 +68,33 @@ public class FileUtil {
 			Storage storage = options.getService();
 			Bucket schematicBucket = storage.get(gcpBucketId,Storage.BucketGetOption.fields());
 			Bucket imageBucket = storage.get(gcpBucketImageId,Storage.BucketGetOption.fields());
-
+			
 			Instant instant = Instant.now();
 			long currentTimeMillis = instant.toEpochMilli();
+			
+			ArrayList<String> imageNames = new ArrayList<>();
+			for(MultipartFile image : images) {
+				String originalImageFileName = image.getOriginalFilename();
+				String imageFileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
+				
+
+				byte[] imageFileData = image.getBytes();
+
+				String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
+				imageNames.add(saveImageFileName);
+
+				Blob imageBlob = imageBucket.create(imageDirectory + "/" + saveImageFileName, imageFileData, image.getContentType());
+			}
+
 
 			String saveSchematicFileName = fileName + "-s" + currentTimeMillis + checkFileExtension(originalSchematicFileName);
-			String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
 
 			Blob schematicBlob = schematicBucket.create(directory + "/" + saveSchematicFileName, schematicFileData, schematic.getContentType());
-			Blob imageBlob = imageBucket.create(imageDirectory + "/" + saveImageFileName, imageFileData, image.getContentType());
 
-			if(schematicBlob != null && imageBlob != null){
+			if(schematicBlob != null && imageNames.size() > 0){
 				log.debug("업로드 성공");
-				return new String[]{saveSchematicFileName, saveImageFileName};
+//				return new String[]{saveSchematicFileName, saveImageFileName};
+				return new FileNameDto(saveSchematicFileName, imageNames);
 			}
 
 		}catch (Exception e){
@@ -131,7 +146,7 @@ public class FileUtil {
 		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
 	}
 	
-	public void deleteImages(String[] fileNames) {
+	private void deleteImages(List<Image> fileNames) {
 	    try {
 	        InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
 
@@ -143,8 +158,8 @@ public class FileUtil {
 	        Storage storage = options.getService();
 	        Bucket imageBucket = storage.get(gcpBucketImageId, Storage.BucketGetOption.fields());
 
-	        for (String fileName : fileNames) {
-	            Blob imageBlob = imageBucket.get(imageDirectory + "/" + fileName);
+	        for (Image fileName : fileNames) {
+	            Blob imageBlob = imageBucket.get(imageDirectory + "/" + fileName.getPath());
 	            if (imageBlob != null) {
 	                imageBlob.delete();
 	                log.debug("이미지 {} 삭제 성공", fileName);
@@ -159,16 +174,11 @@ public class FileUtil {
 	    }
 	}
 	
-	public String updateImage(MultipartFile image, String oldImageName) {
+	public FileNameDto updateImage(MultipartFile[] images, List<Image> oldImageName) {
 
 		try{
 			
-
-			String originalImageFileName = image.getOriginalFilename();
-			String imageFileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
-
 			log.debug("업로드 시작");
-			byte[] imageFileData = image.getBytes();
 
 			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
 
@@ -181,15 +191,27 @@ public class FileUtil {
 			Instant instant = Instant.now();
 			long currentTimeMillis = instant.toEpochMilli();
 
-			String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
+			List<Blob> imageBlob = new ArrayList<>();
+			ArrayList<String> imageNames = new ArrayList<>();
+			
+			for(MultipartFile image : images) {
+				String originalImageFileName = image.getOriginalFilename();
+				String imageFileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
 
-			Blob imageBlob = imageBucket.create(imageDirectory + "/" + saveImageFileName, imageFileData, image.getContentType());
-			if(imageBlob != null){
+				byte[] imageFileData = image.getBytes();
 
-				String[] oldImages = new String[] {oldImageName};
-				deleteImages(oldImages);
+				String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
+
+				imageBlob.add(imageBucket.create(imageDirectory + "/" + saveImageFileName, imageFileData, image.getContentType()));
+				imageNames.add(saveImageFileName);
+			}
+			
+			if(imageBlob.size() > 0){
+
+				
+				deleteImages(oldImageName);
 				log.debug("업로드 성공");
-				return saveImageFileName;
+				return new FileNameDto(null, imageNames);
 			}
 
 		}catch (Exception e){
