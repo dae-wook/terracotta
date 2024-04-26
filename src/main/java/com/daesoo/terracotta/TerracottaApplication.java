@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
 
 @SpringBootApplication
-@OpenAPIDefinition(servers = {@Server(url = "https://terracotta.site", description = "Default Server URL"), @Server(url = "http://localhost:8080", description = "Dev Server URL")})
+@OpenAPIDefinition(servers = {@Server(url = "http://localhost:8080", description = "Dev Server URL"), @Server(url = "https://terracotta.site", description = "Default Server URL")})
 @EnableJpaAuditing
 public class TerracottaApplication {
 
