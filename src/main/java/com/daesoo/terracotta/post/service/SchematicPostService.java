@@ -12,11 +12,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
-import com.daesoo.terracotta.common.entity.Image;
 import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.common.entity.PostTag;
 import com.daesoo.terracotta.common.entity.SchematicPost;
 import com.daesoo.terracotta.common.entity.Tag;
+import com.daesoo.terracotta.common.repository.MemberRepository;
 import com.daesoo.terracotta.common.repository.PostTagRepository;
 import com.daesoo.terracotta.common.repository.SchematicPostRepository;
 import com.daesoo.terracotta.common.repository.TagRepository;
@@ -38,8 +38,10 @@ public class SchematicPostService {
 	private final SchematicPostRepository schematicPostRepository;
 	private final PostTagRepository postTagRepository;
 	private final TagRepository tagRepository;
+	private final MemberRepository memberRepository;
 	private final FileUtil fileUtil;
 	private final SchemeParser schemParser;
+	
 
 	
 	@Transactional
@@ -166,6 +168,19 @@ public class SchematicPostService {
 		}
 
 		return postTagRepository.findPostsByTags(pageable, tags, tags.length).map(SchematicPostResponseDto::of);
+	}
+	
+
+
+	public Page<SchematicPostResponseDto> getSchematicPostListByMemberName(String memberName, Integer page, Integer size) {
+		
+		Member member = memberRepository.findByMemberName(memberName).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.MEMBER_NOT_FOUND.getMessage()));
+		
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		
+		return schematicPostRepository.findAllByMember(pageable, member).map(SchematicPostResponseDto::of);
+
 	}
 
 
