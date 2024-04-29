@@ -1,7 +1,6 @@
 package com.daesoo.terracotta.member.controller;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.dto.ResponseDto;
-import com.daesoo.terracotta.common.entity.SchematicPost;
 import com.daesoo.terracotta.common.exception.UnauthorizedException;
 import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
@@ -28,7 +26,7 @@ import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
 import com.daesoo.terracotta.member.service.MemberService;
-import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
+import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -108,7 +106,7 @@ public class MemberController {
 	}
 	
 	@GetMapping("/my/schematic-posts")
-	public ResponseDto<Page<SchematicPostListResponseDto>> getSchematicPostListByLoginMember(
+	public ResponseDto<Page<SchematicPostResponseDto>> getSchematicPostListByLoginMember(
 			@AuthenticationPrincipal UserDetailsImpl userDetails,
 			@RequestParam(name="page", defaultValue = "1") Integer page,
             @RequestParam(name="size", defaultValue = "10") Integer size,

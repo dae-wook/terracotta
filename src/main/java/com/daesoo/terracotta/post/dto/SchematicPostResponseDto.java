@@ -27,6 +27,8 @@ public class SchematicPostResponseDto {
 	
 	private String image;
 	
+	private List<ImageResponseDto> images;
+	
 	private int buyCount;
 	
 	private int commentCount;
@@ -54,6 +56,7 @@ public class SchematicPostResponseDto {
 				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
 				.memberName(schematicPost.getMember().getMemberName())
 				.image(schematicPost.getImage())
+				.images(schematicPost.getImages().stream().map(ImageResponseDto::of).toList())
 				.createdAt(schematicPost.getCreatedAt())
 				.modifiedAt(schematicPost.getModifiedAt())
 				.build();

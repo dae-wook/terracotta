@@ -16,7 +16,6 @@ import com.daesoo.terracotta.comment.dto.CommentResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.entity.EmailVerification;
 import com.daesoo.terracotta.common.entity.Member;
-import com.daesoo.terracotta.common.entity.SchematicPost;
 import com.daesoo.terracotta.common.exception.DuplicationException;
 import com.daesoo.terracotta.common.jwt.JwtUtil;
 import com.daesoo.terracotta.common.repository.CommentRepository;
@@ -30,7 +29,7 @@ import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
-import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
+import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -200,14 +199,14 @@ public class MemberService {
 		return "탈퇴 성공";
 	}
 
-	public Page<SchematicPostListResponseDto> getSchematicPostListByLoginMember(Member user, Integer page, Integer size, Long[] tags) {
+	public Page<SchematicPostResponseDto> getSchematicPostListByLoginMember(Member user, Integer page, Integer size, Long[] tags) {
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		if(tags[0] == 0) {
-			return schematicPostRepository.findAllByMember(pageable, user).map(SchematicPostListResponseDto::of);
+			return schematicPostRepository.findAllByMember(pageable, user).map(SchematicPostResponseDto::of);
 		}
 
-		return postTagRepository.findPostsByTagsAndMember(pageable, tags, tags.length, user).map(SchematicPostListResponseDto::of);
+		return postTagRepository.findPostsByTagsAndMember(pageable, tags, tags.length, user).map(SchematicPostResponseDto::of);
 	}
 
 	

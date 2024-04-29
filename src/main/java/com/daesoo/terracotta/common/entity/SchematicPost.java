@@ -40,7 +40,6 @@ public class SchematicPost extends TimeStamp{
     @Column(nullable = false)
     private String content;
     
-    @Column(nullable = false)
     private String image;
     
     private int price;
@@ -131,7 +130,12 @@ public class SchematicPost extends TimeStamp{
 	}
 
 	public void addImages(ArrayList<String> imageNames) {
-		images.clear();
+	    if (this.images == null) {
+	        this.images = new ArrayList<>();
+	    }else {
+	    	this.images.clear();
+	    }
+	    
     	for(String imageName : imageNames) {
     		Image image = Image.create(this, imageName);
     		images.add(image);
