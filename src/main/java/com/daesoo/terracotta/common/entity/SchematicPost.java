@@ -3,6 +3,7 @@ package com.daesoo.terracotta.common.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.daesoo.terracotta.post.dto.FileNameDto;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.schematic.util.SchematicDto;
 
@@ -39,7 +40,6 @@ public class SchematicPost extends TimeStamp{
     @Column(nullable = false)
     private String content;
     
-    @Column(nullable = false)
     private String image;
     
     private int price;
@@ -60,16 +60,18 @@ public class SchematicPost extends TimeStamp{
     @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
     
+    @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL)
+    private List<Image> images = new ArrayList<>();
+    
     @ManyToOne
     private Member member;
     
-    public static SchematicPost create(SchematicPostRequestDto dto, SchematicDto schematicDto, String[] filePath, Member member) {
+    public static SchematicPost create(SchematicPostRequestDto dto, SchematicDto schematicDto, FileNameDto fileName, Member member) {
     	return SchematicPost.builder()
     			.title(dto.getTitle())
     			.content(dto.getDescription())
     			.size(schematicDto.getSize())
-    			.filePath(filePath[0])
-    			.image(filePath[1])
+    			.filePath(fileName.getSchameticName())
     			.member(member)
     			.postTags(new ArrayList<PostTag>())
     			.build();
@@ -125,6 +127,19 @@ public class SchematicPost extends TimeStamp{
 	
 	private float averageStar() {
 		return Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
+	}
+
+	public void addImages(ArrayList<String> imageNames) {
+	    if (this.images == null) {
+	        this.images = new ArrayList<>();
+	    }else {
+	    	this.images.clear();
+	    }
+	    
+    	for(String imageName : imageNames) {
+    		Image image = Image.create(this, imageName);
+    		images.add(image);
+    	}
 	}
 
 }

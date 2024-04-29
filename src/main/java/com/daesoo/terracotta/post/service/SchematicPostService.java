@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
+import com.daesoo.terracotta.common.entity.Image;
 import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.common.entity.PostTag;
 import com.daesoo.terracotta.common.entity.SchematicPost;
@@ -20,7 +21,7 @@ import com.daesoo.terracotta.common.repository.PostTagRepository;
 import com.daesoo.terracotta.common.repository.SchematicPostRepository;
 import com.daesoo.terracotta.common.repository.TagRepository;
 import com.daesoo.terracotta.common.util.FileUtil;
-import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
+import com.daesoo.terracotta.post.dto.FileNameDto;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 import com.daesoo.terracotta.schematic.util.SchematicDto;
@@ -53,17 +54,18 @@ public class SchematicPostService {
 			e.printStackTrace();
 		}
 		
-
-		String schematicJson ="";
 		
-		String[] filePath = fileUtil.uploadFile(schematicDto, schematicPostRequestDto.getFile(), schematicPostRequestDto.getImage());
+		FileNameDto fileName = fileUtil.uploadFile(schematicDto, schematicPostRequestDto.getFile(), schematicPostRequestDto.getImages());
 		
-		SchematicPost schematicPost = SchematicPost.create(schematicPostRequestDto, schematicDto, filePath, member);
+		SchematicPost schematicPost = SchematicPost.create(schematicPostRequestDto, schematicDto, fileName, member);
 		
 		List<Tag> tags = tagRepository.findAllById(schematicPostRequestDto.getTags());
 		for(Tag tag: tags) {
 			schematicPost.addPostTag(tag);
 		}
+		
+		schematicPost.addImages(fileName.getImageNames());
+		
 		schematicPostRepository.save(schematicPost);
 		
 		return SchematicPostResponseDto.of(schematicPost);
@@ -76,6 +78,7 @@ public class SchematicPostService {
 				.orElseThrow( () -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage()));
 		
 		SchematicDto schematicDto = null;
+		
 		
 		if(schematicPost.getMember().getId() != member.getId()) {
 			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
@@ -91,11 +94,14 @@ public class SchematicPostService {
 			}
 		}
 		
-		if(schematicPostRequestDto.getImage() != null) {
-			filePath[1] = fileUtil.updateImage(schematicPostRequestDto.getImage(), schematicPost.getImage());
+		if(schematicPostRequestDto.getImages() != null) {
+			FileNameDto fileNameDto = fileUtil.updateImage(schematicPostRequestDto.getImages(), schematicPost.getImages());
+
+			schematicPost.addImages(fileNameDto.getImageNames());
 		}
 		
 		schematicPost.update(schematicPostRequestDto, schematicDto, filePath);
+		
 		
 		List<PostTag> postTags = postTagRepository.findAllBySchematicPostId(schematicPostId);
 		
@@ -151,15 +157,15 @@ public class SchematicPostService {
 	}
 
 
-	public Page<SchematicPostListResponseDto> getSchematicPostList(Integer page, Integer size, Long[] tags) {
+	public Page<SchematicPostResponseDto> getSchematicPostList(Integer page, Integer size, Long[] tags) {
 		
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		
 		if(tags[0] == 0) {
-			return schematicPostRepository.findAll(pageable).map(SchematicPostListResponseDto::of);
+			return schematicPostRepository.findAll(pageable).map(SchematicPostResponseDto::of);
 		}
 
-		return postTagRepository.findPostsByTags(pageable, tags, tags.length).map(SchematicPostListResponseDto::of);
+		return postTagRepository.findPostsByTags(pageable, tags, tags.length).map(SchematicPostResponseDto::of);
 	}
 
 
