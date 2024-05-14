@@ -72,14 +72,14 @@ public class SchematicPostController {
 		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematicPostList(page, size, tags));
 	}
 	
-	@GetMapping("member/{memberName}")
+	@GetMapping("member/{nickname}")
 	public ResponseDto<Page<SchematicPostResponseDto>> getSchematicPostListByMemberName(
-			@PathVariable("memberName") String memberName,
+			@PathVariable("nickname") String nickname,
             @RequestParam(name="page", defaultValue = "1") Integer page,
             @RequestParam(name="size", defaultValue = "10") Integer size
 			) {
 		
-		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematicPostListByMemberName(memberName, page, size));
+		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematicPostListByMemberName(nickname, page, size));
 	}
 	
 	@GetMapping("{schematicPostId}")
