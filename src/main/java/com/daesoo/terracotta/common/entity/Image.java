@@ -36,4 +36,12 @@ public class Image {
 				.build();
 	}
 	
+    public void setSchematicPost(SchematicPost schematicPost) {
+        this.schematicPost = schematicPost;
+    }
+
+    public void setImageName(String imageName) {
+        this.path = imageName;
+    }
+	
 }

@@ -1,6 +1,7 @@
 package com.daesoo.terracotta.post.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,12 +96,13 @@ public class SchematicPostService {
 				e.printStackTrace();
 			}
 		}
-		
 		if(schematicPostRequestDto.getImages() != null) {
-			FileNameDto fileNameDto = fileUtil.updateImage(schematicPostRequestDto.getImages(), schematicPost.getImages());
+			ArrayList<String> updatedImageNames = fileUtil.updateImage(schematicPostRequestDto.getImages(), schematicPost.getImages());
 
-			schematicPost.addImages(fileNameDto.getImageNames());
+			schematicPost.addImages(updatedImageNames);
 		}
+		
+		
 		
 		schematicPost.update(schematicPostRequestDto, schematicDto, filePath);
 		

@@ -1,6 +1,7 @@
 package com.daesoo.terracotta.common.entity;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.daesoo.terracotta.post.dto.FileNameDto;
@@ -60,7 +61,7 @@ public class SchematicPost extends TimeStamp{
     @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
     
-    @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
     
     @ManyToOne
@@ -130,16 +131,21 @@ public class SchematicPost extends TimeStamp{
 	}
 
 	public void addImages(ArrayList<String> imageNames) {
-	    if (this.images == null) {
-	        this.images = new ArrayList<>();
-	    }else {
-	    	this.images.clear();
-	    }
-	    
-    	for(String imageName : imageNames) {
-    		Image image = Image.create(this, imageName);
-    		images.add(image);
-    	}
-	}
+        if (this.images == null) {
+            this.images = new ArrayList<>();
+        }
+
+        Iterator<Image> iterator = this.images.iterator();
+        while (iterator.hasNext()) {
+            Image image = iterator.next();
+            image.setSchematicPost(null);
+            iterator.remove();
+        }
+
+        for (String imageName : imageNames) {
+            Image image = Image.create(this, imageName);
+            this.images.add(image);
+        }
+    }
 
 }

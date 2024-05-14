@@ -174,7 +174,7 @@ public class FileUtil {
 	    }
 	}
 	
-	public FileNameDto updateImage(MultipartFile[] images, List<Image> oldImageName) {
+	public ArrayList<String> updateImage(MultipartFile[] images, List<Image> oldImageName) {
 
 		try{
 			
@@ -211,7 +211,7 @@ public class FileUtil {
 				
 				deleteImages(oldImageName);
 				log.debug("업로드 성공");
-				return new FileNameDto(null, imageNames);
+				return imageNames;
 			}
 
 		}catch (Exception e){
