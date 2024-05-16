@@ -23,7 +23,7 @@ import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
-import com.daesoo.terracotta.member.dto.MemberResponseDto;
+import com.daesoo.terracotta.member.dto.LoginResponseDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
 import com.daesoo.terracotta.member.service.MemberService;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
@@ -41,7 +41,7 @@ public class MemberController {
 	private final MemberService memberService;
 	
 	@PostMapping("/signup")
-	public ResponseDto<MemberResponseDto> signup(
+	public ResponseDto<LoginResponseDto> signup(
 			@Valid @RequestBody SignupRequestDto signupRequestDto,
 			HttpServletResponse response) {
 		
@@ -58,7 +58,7 @@ public class MemberController {
 	}
 	
 	@PostMapping("/login")
-	public ResponseDto<MemberResponseDto> login(
+	public ResponseDto<LoginResponseDto> login(
 			@RequestBody LoginRequestDto loginRequestDto,
 			HttpServletResponse response) {
 		return ResponseDto.success(HttpStatus.OK, memberService.login(loginRequestDto, response));

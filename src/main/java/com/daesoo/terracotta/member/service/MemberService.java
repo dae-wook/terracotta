@@ -27,7 +27,7 @@ import com.daesoo.terracotta.common.util.MailUtil;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
-import com.daesoo.terracotta.member.dto.MemberResponseDto;
+import com.daesoo.terracotta.member.dto.LoginResponseDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 
@@ -50,7 +50,7 @@ public class MemberService {
 	private final MailUtil mailUtil;
 
 	@Transactional
-	public MemberResponseDto signup(SignupRequestDto signupRequestDto, HttpServletResponse response) {
+	public LoginResponseDto signup(SignupRequestDto signupRequestDto, HttpServletResponse response) {
 		
 		String encodedPassword = passwordEncoder.encode(signupRequestDto.getPassword());
 		
@@ -76,10 +76,10 @@ public class MemberService {
 		emailVerificationRepository.delete(emailVerification);
 		String token = jwtUtil.createToken(newMember.getEmail());
 		
-		return MemberResponseDto.of(newMember, token);
+		return LoginResponseDto.of(newMember, token);
 	}
 
-	public MemberResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+	public LoginResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
 		Member member = memberRepository.findByEmail(loginRequestDto.getEmail()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.WRONG_EMAIL_OR_PASSWORD.getMessage())
         );
@@ -91,7 +91,7 @@ public class MemberService {
 //		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getEmail()));
 		String token = jwtUtil.createToken(member.getEmail());
 		
-		return MemberResponseDto.of(member, token);
+		return LoginResponseDto.of(member, token);
 	}
 
 	public Boolean existByEmail(String email) {

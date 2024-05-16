@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class MemberResponseDto {
+public class LoginResponseDto {
 	
 	private Long id;
 	
@@ -22,8 +22,8 @@ public class MemberResponseDto {
 	
 	private List<NotificationResponseDto> notifications;
 	
-	public static MemberResponseDto of(Member member, String token) {
-		return MemberResponseDto.builder()
+	public static LoginResponseDto of(Member member, String token) {
+		return LoginResponseDto.builder()
 				.id(member.getId())
 				.email(member.getEmail())
 				.nickname(member.getMemberName())

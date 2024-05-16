@@ -36,6 +36,9 @@ public class Member extends TimeStamp{
     @Column(nullable = false, unique = true)
     private String memberName;
     
+    @Column(length = 255)
+    private String statusMessage;
+    
     
     public static Member create(SignupRequestDto signupRequestDto, String encodedPassword) {
     	return Member.builder()
