@@ -41,6 +41,8 @@ public class Member extends TimeStamp{
     
     private int follower;
     
+    private int rank;
+    
     
     public static Member create(SignupRequestDto signupRequestDto, String encodedPassword) {
     	return Member.builder()
@@ -52,7 +54,7 @@ public class Member extends TimeStamp{
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Comment> comments;
-    
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<SchematicPost> schematicPosts;
     
