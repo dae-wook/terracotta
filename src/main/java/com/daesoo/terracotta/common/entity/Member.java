@@ -37,7 +37,9 @@ public class Member extends TimeStamp{
     private String memberName;
     
     @Column(length = 255)
-    private String statusMessage;
+    private String introduce;
+    
+    private int follower;
     
     
     public static Member create(SignupRequestDto signupRequestDto, String encodedPassword) {
