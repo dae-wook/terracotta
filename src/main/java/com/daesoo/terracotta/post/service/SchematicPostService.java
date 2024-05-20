@@ -58,7 +58,7 @@ public class SchematicPostService {
 		}
 		
 		
-		FileNameDto fileName = fileUtil.uploadFile(schematicDto, schematicPostRequestDto.getFile(), schematicPostRequestDto.getImages());
+		FileNameDto fileName = fileUtil.uploadFile(schematicDto, schematicPostRequestDto.getFile());
 		
 		SchematicPost schematicPost = SchematicPost.create(schematicPostRequestDto, schematicDto, fileName, member);
 		
@@ -67,7 +67,7 @@ public class SchematicPostService {
 			schematicPost.addPostTag(tag);
 		}
 		
-		schematicPost.addImages(fileName.getImageNames());
+		schematicPost.addImages(schematicPostRequestDto.getImages());
 		
 		schematicPostRepository.save(schematicPost);
 		
@@ -97,7 +97,7 @@ public class SchematicPostService {
 			}
 		}
 		if(schematicPostRequestDto.getImages() != null) {
-			ArrayList<String> updatedImageNames = fileUtil.updateImage(schematicPostRequestDto.getImages(), schematicPost.getImages());
+			String[] updatedImageNames = schematicPostRequestDto.getImages();
 
 			schematicPost.addImages(updatedImageNames);
 		}

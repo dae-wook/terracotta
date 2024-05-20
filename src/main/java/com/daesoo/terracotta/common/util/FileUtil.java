@@ -46,7 +46,7 @@ public class FileUtil {
 	@Value("${GCP_IMAGE_DIR_NAME}")
 	private String imageDirectory;
 
-	public FileNameDto uploadFile(SchematicDto schematicDto, MultipartFile schematic ,MultipartFile[] images) {
+	public FileNameDto uploadFile(SchematicDto schematicDto, MultipartFile schematic) {
 
 		try{
 
@@ -67,6 +67,40 @@ public class FileUtil {
 
 			Storage storage = options.getService();
 			Bucket schematicBucket = storage.get(gcpBucketId,Storage.BucketGetOption.fields());
+			
+			Instant instant = Instant.now();
+			long currentTimeMillis = instant.toEpochMilli();
+			
+
+
+			String saveSchematicFileName = fileName + "-s" + currentTimeMillis + checkFileExtension(originalSchematicFileName);
+
+			Blob schematicBlob = schematicBucket.create(directory + "/" + saveSchematicFileName, schematicFileData, schematic.getContentType());
+
+			if(schematicBlob != null){
+				log.debug("업로드 성공");
+//				return new String[]{saveSchematicFileName, saveImageFileName};
+				return new FileNameDto(saveSchematicFileName, null);
+			}
+
+		}catch (Exception e){
+			e.printStackTrace();
+			throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+		}
+		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+	}
+	
+	public ArrayList<String> uploadImages(MultipartFile[] images) {
+
+		try{
+			log.debug("업로드 시작");
+
+			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+			
+			StorageOptions options = StorageOptions.newBuilder().setProjectId(gcpProjectId)
+					.setCredentials(GoogleCredentials.fromStream(inputStream)).build();
+
+			Storage storage = options.getService();
 			Bucket imageBucket = storage.get(gcpBucketImageId,Storage.BucketGetOption.fields());
 			
 			Instant instant = Instant.now();
@@ -87,14 +121,10 @@ public class FileUtil {
 			}
 
 
-			String saveSchematicFileName = fileName + "-s" + currentTimeMillis + checkFileExtension(originalSchematicFileName);
 
-			Blob schematicBlob = schematicBucket.create(directory + "/" + saveSchematicFileName, schematicFileData, schematic.getContentType());
-
-			if(schematicBlob != null && imageNames.size() > 0){
+			if(imageNames.size() > 0){
 				log.debug("업로드 성공");
-//				return new String[]{saveSchematicFileName, saveImageFileName};
-				return new FileNameDto(saveSchematicFileName, imageNames);
+				return imageNames;
 			}
 
 		}catch (Exception e){
@@ -171,6 +201,36 @@ public class FileUtil {
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        throw new IllegalArgumentException("Error occurred while deleting files from GCS");
+	    }
+	}
+	
+	public Boolean deleteImagesByImageName(String[] fileNames) {
+	    try {
+	        InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+
+	        StorageOptions options = StorageOptions.newBuilder()
+	            .setProjectId(gcpProjectId)
+	            .setCredentials(GoogleCredentials.fromStream(inputStream))
+	            .build();
+
+	        Storage storage = options.getService();
+	        Bucket imageBucket = storage.get(gcpBucketImageId, Storage.BucketGetOption.fields());
+
+	        for (String fileName : fileNames) {
+	            Blob imageBlob = imageBucket.get(imageDirectory + "/" + fileName);
+	            if (imageBlob != null) {
+	                imageBlob.delete();
+	                log.debug("이미지 {} 삭제 성공", fileName);
+	            } else {
+	                log.warn("이미지 {} 찾을 수 없음", fileName);
+	            }
+	        }
+	        return true;
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+//	        throw new IllegalArgumentException("Error occurred while deleting files from GCS");
 	    }
 	}
 	

@@ -130,7 +130,7 @@ public class SchematicPost extends TimeStamp{
 		return Math.round((this.totalStar * 1.0f / this.commentCount) * 10) / 10.0f;
 	}
 
-	public void addImages(ArrayList<String> imageNames) {
+	public void addImages(String[] imageNames) {
         if (this.images == null) {
             this.images = new ArrayList<>();
         }

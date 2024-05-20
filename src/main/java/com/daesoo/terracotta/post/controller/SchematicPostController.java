@@ -43,8 +43,6 @@ public class SchematicPostController {
 	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
 	    }
 		
-		System.out.println(schematicPostRequestDto.getImages()[0].getOriginalFilename());
-		System.out.println(schematicPostRequestDto.getFile().getOriginalFilename());
 		
 		return ResponseDto.success(HttpStatus.OK, schematicPostService.createSchematicPost(schematicPostRequestDto, userDetails.getUser()));
 	}
