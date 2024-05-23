@@ -22,12 +22,15 @@ public class MemberResponseDto {
 	
 	private List<NotificationResponseDto> notifications;
 	
-	public static MemberResponseDto of(Member member, String token) {
+	private String ipAddress;
+	
+	public static MemberResponseDto of(Member member, String token, String ipAddress) {
 		return MemberResponseDto.builder()
 				.id(member.getId())
 				.email(member.getEmail())
 				.nickname(member.getMemberName())
 				.token(token)
+				.ipAddress(ipAddress)
 				.notifications(member.getNotifications().stream().map(NotificationResponseDto :: of).toList())
 				.build();
 	}

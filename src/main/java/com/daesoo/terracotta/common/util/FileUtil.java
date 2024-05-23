@@ -6,6 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -45,50 +48,46 @@ public class FileUtil {
 	
 	@Value("${GCP_IMAGE_DIR_NAME}")
 	private String imageDirectory;
+	
+	private final ObjectMapper mapper = new ObjectMapper();
 
-	public FileNameDto uploadFile(SchematicDto schematicDto, MultipartFile schematic) {
+    public FileNameDto uploadFile(SchematicDto schematicDto, MultipartFile schematic) {
+        try (InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream()) {
 
-		try{
+            String schematicJson = mapper.writeValueAsString(schematicDto);
 
-			ObjectMapper mapper = new ObjectMapper();
-			String schematicJson = mapper.writeValueAsString(schematicDto);
-			
-			String originalSchematicFileName = schematic.getOriginalFilename();
-			String fileName = originalSchematicFileName.substring(0, originalSchematicFileName.lastIndexOf('.'));
+            String originalSchematicFileName = schematic.getOriginalFilename();
+            String fileName = originalSchematicFileName.substring(0, originalSchematicFileName.lastIndexOf('.'));
 
+            log.debug("업로드 시작");
 
-			log.debug("업로드 시작");
-			byte[] schematicFileData = schematicJson.getBytes();
+            StorageOptions options = StorageOptions.newBuilder()
+                    .setProjectId(gcpProjectId)
+                    .setCredentials(GoogleCredentials.fromStream(inputStream))
+                    .build();
 
-			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+            Storage storage = options.getService();
+            Bucket schematicBucket = storage.get(gcpBucketId, Storage.BucketGetOption.fields());
 
-			StorageOptions options = StorageOptions.newBuilder().setProjectId(gcpProjectId)
-					.setCredentials(GoogleCredentials.fromStream(inputStream)).build();
+            Instant instant = Instant.now();
+            long currentTimeMillis = instant.toEpochMilli();
 
-			Storage storage = options.getService();
-			Bucket schematicBucket = storage.get(gcpBucketId,Storage.BucketGetOption.fields());
-			
-			Instant instant = Instant.now();
-			long currentTimeMillis = instant.toEpochMilli();
-			
+            String saveSchematicFileName = fileName + "-s" + currentTimeMillis + checkFileExtension(originalSchematicFileName);
 
+            Blob schematicBlob = schematicBucket.create(directory + "/" + saveSchematicFileName, schematicJson.getBytes(), schematic.getContentType());
 
-			String saveSchematicFileName = fileName + "-s" + currentTimeMillis + checkFileExtension(originalSchematicFileName);
+            if (schematicBlob != null) {
+                log.debug("업로드 성공");
+                return new FileNameDto(saveSchematicFileName, null);
+            }
 
-			Blob schematicBlob = schematicBucket.create(directory + "/" + saveSchematicFileName, schematicFileData, schematic.getContentType());
+        } catch (Exception e) {
+            log.error("GCS에 저장 중 에러 발생", e);
+            throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+        }
 
-			if(schematicBlob != null){
-				log.debug("업로드 성공");
-//				return new String[]{saveSchematicFileName, saveImageFileName};
-				return new FileNameDto(saveSchematicFileName, null);
-			}
-
-		}catch (Exception e){
-			e.printStackTrace();
-			throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
-		}
-		throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
-	}
+        throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+    }
 	
 	public ArrayList<String> uploadImages(MultipartFile[] images) {
 
@@ -203,6 +202,34 @@ public class FileUtil {
 	        throw new IllegalArgumentException("Error occurred while deleting files from GCS");
 	    }
 	}
+	
+	public void deleteFilesExcept(List<String> excludeFileNames) {
+        try (InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream()) {
+            StorageOptions options = StorageOptions.newBuilder()
+                    .setProjectId(gcpProjectId)
+                    .setCredentials(GoogleCredentials.fromStream(inputStream))
+                    .build();
+
+            Storage storage = options.getService();
+            Bucket bucket = storage.get(gcpBucketImageId, Storage.BucketGetOption.fields());
+
+            Set<String> excludeFileNameSet = excludeFileNames.stream().collect(Collectors.toSet());
+
+            Iterable<Blob> blobs = bucket.list(Storage.BlobListOption.prefix(imageDirectory)).iterateAll();
+            List<Blob> filesToDelete = StreamSupport.stream(blobs.spliterator(), false)
+                    .filter(blob -> !excludeFileNameSet.contains(blob.getName()))
+                    .collect(Collectors.toList());
+
+            for (Blob blob : filesToDelete) {
+                blob.delete();
+                log.info("파일 삭제: " + blob.getName());
+            }
+
+        } catch (Exception e) {
+            log.error("GCS 파일 삭제 중 에러 발생", e);
+            throw new IllegalArgumentException("GCS 파일 삭제 중 에러 발생");
+        }
+    }
 	
 	public Boolean deleteImagesByImageName(String[] fileNames) {
 	    try {

@@ -5,10 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
@@ -72,20 +71,33 @@ public class SchemeParser {
 
 	        Map<String, List<int[]>> blockMap = new HashMap<>();
 	        
-	        int blockCount = 0;
+//	        int blockCount = 0;
 	        
 	        // 블록맵 구축
-	        for (Pair<SchematicBlockPos, SchematicBlock> pair : schematic.blocks().toList()) {
-	        	SchematicBlockPos pos = pair.left;
-	            SchematicBlock block = pair.right;
-	            if(block.name.equals("minecraft:air")) {
-	            	continue;
-	            }
-	            String name = block.name.split(":")[1];
-	            blockCount++;
-	            blockMap.computeIfAbsent(name, k -> new ArrayList<>())
-	                    .add(new int[]{convertPositive(pos.x), convertPositive(pos.y), convertPositive(pos.z)});
-	        }
+//	        for (Pair<SchematicBlockPos, SchematicBlock> pair : schematic.blocks().toList()) {
+//	        	SchematicBlockPos pos = pair.left;
+//	            SchematicBlock block = pair.right;
+//	            if(block.name.equals("minecraft:air")) {
+//	            	continue;
+//	            }
+//	            String name = block.name.split(":")[1];
+//	            blockCount++;
+//	            blockMap.computeIfAbsent(name, k -> new ArrayList<>())
+//	                    .add(new int[]{convertPositive(pos.x), convertPositive(pos.y), convertPositive(pos.z)});
+//	        }
+	        
+	        AtomicInteger blockCount = new AtomicInteger();
+	        
+	        schematic.blocks().forEach(pair -> {
+                SchematicBlockPos pos = pair.left;
+                SchematicBlock block = pair.right;
+                if (!"minecraft:air".equals(block.name)) {
+                    String name = block.name.split(":")[1];
+                    blockCount.incrementAndGet();
+                    blockMap.computeIfAbsent(name, k -> new ArrayList<>())
+                            .add(new int[]{convertPositive(pos.x), convertPositive(pos.y), convertPositive(pos.z)});
+                }
+            });
 	        if (blockMap.size() < 1) {
 	        	throw new IllegalArgumentException("dd");
 	        }
@@ -98,7 +110,7 @@ public class SchemeParser {
 	                .height(schematic.height())
 	                .length(schematic.length())
 	                .blockData(GzipWraper.compress(json))
-	                .size(blockCount)
+	                .size(blockCount.get())
 	                .build();
 	        
 

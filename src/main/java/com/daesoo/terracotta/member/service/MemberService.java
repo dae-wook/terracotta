@@ -20,12 +20,14 @@ import com.daesoo.terracotta.common.exception.DuplicationException;
 import com.daesoo.terracotta.common.jwt.JwtUtil;
 import com.daesoo.terracotta.common.repository.CommentRepository;
 import com.daesoo.terracotta.common.repository.EmailVerificationRepository;
+import com.daesoo.terracotta.common.repository.LoginHistoryRepository;
 import com.daesoo.terracotta.common.repository.MemberRepository;
 import com.daesoo.terracotta.common.repository.PostTagRepository;
 import com.daesoo.terracotta.common.repository.SchematicPostRepository;
 import com.daesoo.terracotta.common.util.MailUtil;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
+import com.daesoo.terracotta.member.dto.LoginHistoryResponseDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
@@ -46,6 +48,7 @@ public class MemberService {
 	private final CommentRepository commentRepository;
 	private final SchematicPostRepository schematicPostRepository;
 	private final PostTagRepository postTagRepository;
+	private final LoginHistoryRepository loginHistoryRepository;
 	private final JwtUtil jwtUtil;
 	private final MailUtil mailUtil;
 
@@ -76,10 +79,10 @@ public class MemberService {
 		emailVerificationRepository.delete(emailVerification);
 		String token = jwtUtil.createToken(newMember.getEmail());
 		
-		return MemberResponseDto.of(newMember, token);
+		return MemberResponseDto.of(newMember, token, null);
 	}
 
-	public MemberResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+	public MemberResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response, String ip) {
 		Member member = memberRepository.findByEmail(loginRequestDto.getEmail()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.WRONG_EMAIL_OR_PASSWORD.getMessage())
         );
@@ -88,10 +91,11 @@ public class MemberService {
 			throw new BadCredentialsException(ErrorMessage.WRONG_EMAIL_OR_PASSWORD.getMessage());
 		}
 		
-//		response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getEmail()));
+
+		
 		String token = jwtUtil.createToken(member.getEmail());
 		
-		return MemberResponseDto.of(member, token);
+		return MemberResponseDto.of(member, token, ip);
 	}
 
 	public Boolean existByEmail(String email) {
@@ -209,5 +213,15 @@ public class MemberService {
 		return postTagRepository.findPostsByTagsAndMember(pageable, tags, tags.length, user).map(SchematicPostResponseDto::of);
 	}
 
+	public Page<LoginHistoryResponseDto> getLoginHistory(Member user, Integer page, Integer size) {
+		// TODO Auto-generated method stub
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		
+		
+		return loginHistoryRepository.findAllByEmail(pageable, user.getEmail()).map(LoginHistoryResponseDto::of);
+	}
+
+	
+	
 	
 }
