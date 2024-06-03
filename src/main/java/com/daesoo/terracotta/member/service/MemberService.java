@@ -187,14 +187,6 @@ public class MemberService {
 		return true;
 	}
 
-	public Page<CommentResponseDto> getCommentListByLoginMember(Member member, Integer page, Integer size) {
-		
-//		commentRepository.findByMemberMemberId(member.getId());
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		
-		return commentRepository.findByMemberId(pageable, member.getId()).map(CommentResponseDto::of);
-	}
-
 	
 	@Transactional
 	public String resign(Member user) {
@@ -203,23 +195,7 @@ public class MemberService {
 		return "탈퇴 성공";
 	}
 
-	public Page<SchematicPostResponseDto> getSchematicPostListByLoginMember(Member user, Integer page, Integer size, Long[] tags) {
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-
-		if(tags[0] == 0) {
-			return schematicPostRepository.findAllByMember(pageable, user).map(SchematicPostResponseDto::of);
-		}
-
-		return postTagRepository.findPostsByTagsAndMember(pageable, tags, tags.length, user).map(SchematicPostResponseDto::of);
-	}
-
-	public Page<LoginHistoryResponseDto> getLoginHistory(Member user, Integer page, Integer size) {
-		// TODO Auto-generated method stub
-		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		
-		
-		return loginHistoryRepository.findAllByEmail(pageable, user.getEmail()).map(LoginHistoryResponseDto::of);
-	}
+	
 
 	
 	

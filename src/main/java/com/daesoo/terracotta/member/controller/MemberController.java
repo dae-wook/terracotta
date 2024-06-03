@@ -95,45 +95,6 @@ public class MemberController {
 		return ResponseDto.success(HttpStatus.OK, memberService.emailVerification(emailRequestDto));
 	}
 	
-	@GetMapping("/my/comments")
-	public ResponseDto<Page<CommentResponseDto>> getCommentListByLoginMember(
-			@AuthenticationPrincipal UserDetailsImpl userDetails,
-			@RequestParam(name="page", defaultValue = "1") Integer page,
-            @RequestParam(name="size", defaultValue = "10") Integer size) {
-		
-		if (userDetails == null) {
-	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
-	    }
-		
-		return ResponseDto.success(HttpStatus.OK, memberService.getCommentListByLoginMember(userDetails.getUser(), page, size));
-	}
-	
-	@GetMapping("/my/histories")
-	public ResponseDto<Page<LoginHistoryResponseDto>> getLoginHistory(
-			@AuthenticationPrincipal UserDetailsImpl userDetails,
-			@RequestParam(name="page", defaultValue = "1") Integer page,
-            @RequestParam(name="size", defaultValue = "10") Integer size) {
-		
-		if (userDetails == null) {
-	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
-	    }
-		
-		return ResponseDto.success(HttpStatus.OK, memberService.getLoginHistory(userDetails.getUser(), page, size));
-	}
-	
-	@GetMapping("/my/schematic-posts")
-	public ResponseDto<Page<SchematicPostResponseDto>> getSchematicPostListByLoginMember(
-			@AuthenticationPrincipal UserDetailsImpl userDetails,
-			@RequestParam(name="page", defaultValue = "1") Integer page,
-            @RequestParam(name="size", defaultValue = "10") Integer size,
-            @RequestParam(name="tags", defaultValue = "0") Long[] tags) {
-		
-		if (userDetails == null) {
-	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
-	    }
-		
-		return ResponseDto.success(HttpStatus.OK, memberService.getSchematicPostListByLoginMember(userDetails.getUser(), page, size, tags));
-	}
 	
 	public String getClientIp(HttpServletRequest request) {
 	    String ipAddress = request.getHeader("X-Forwarded-For");
