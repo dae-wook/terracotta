@@ -33,8 +33,13 @@ public class ImageController {
 	}
 	
 	@DeleteMapping("/all")
-	public ResponseDto<Integer> deleteFilesExcept() {
-		return ResponseDto.success(HttpStatus.OK, imageService.deleteFilesExcept());
+	public ResponseDto<Integer> deleteImagesExcept() {
+		return ResponseDto.success(HttpStatus.OK, imageService.deleteFilesExcept("image"));
+	}
+	
+	@DeleteMapping("/alls")
+	public ResponseDto<Integer> deleteSchematicsExcept() {
+		return ResponseDto.success(HttpStatus.OK, imageService.deleteFilesExcept("schematic"));
 	}
 	
 }

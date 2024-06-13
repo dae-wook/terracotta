@@ -231,6 +231,34 @@ public class FileUtil {
         }
     }
 	
+	public void deleteSchematicExcept(List<String> excludeFileNames) {
+        try (InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream()) {
+            StorageOptions options = StorageOptions.newBuilder()
+                    .setProjectId(gcpProjectId)
+                    .setCredentials(GoogleCredentials.fromStream(inputStream))
+                    .build();
+
+            Storage storage = options.getService();
+            Bucket bucket = storage.get(gcpBucketId, Storage.BucketGetOption.fields());
+
+            Set<String> excludeFileNameSet = excludeFileNames.stream().collect(Collectors.toSet());
+
+            Iterable<Blob> blobs = bucket.list(Storage.BlobListOption.prefix(directory)).iterateAll();
+            List<Blob> filesToDelete = StreamSupport.stream(blobs.spliterator(), false)
+                    .filter(blob -> !excludeFileNameSet.contains(blob.getName()))
+                    .collect(Collectors.toList());
+
+            for (Blob blob : filesToDelete) {
+                blob.delete();
+                log.info("파일 삭제: " + blob.getName());
+            }
+
+        } catch (Exception e) {
+            log.error("GCS 파일 삭제 중 에러 발생", e);
+            throw new IllegalArgumentException("GCS 파일 삭제 중 에러 발생");
+        }
+    }
+	
 	public Boolean deleteImagesByImageName(String[] fileNames) {
 	    try {
 	        InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
