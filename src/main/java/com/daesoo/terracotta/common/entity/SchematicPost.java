@@ -64,6 +64,9 @@ public class SchematicPost extends TimeStamp{
     @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
     
+    @OneToMany(mappedBy = "schematicPost", cascade = CascadeType.ALL)
+    private List<BuildProgress> buildProgress = new ArrayList<>();
+    
     @ManyToOne
     private Member member;
     

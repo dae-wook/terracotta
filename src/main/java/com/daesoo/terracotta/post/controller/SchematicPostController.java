@@ -86,8 +86,8 @@ public class SchematicPostController {
 	
 	@GetMapping("{schematicPostId}")
 	public ResponseDto<SchematicPostResponseDto> getSchematicPost(
-			@PathVariable("schematicPostId") Long schematicPostId) {
-		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematicPost(schematicPostId));
+			@PathVariable("schematicPostId") Long schematicPostId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematicPost(schematicPostId, userDetails));
 	}
 	
 	@GetMapping("{schematicPostId}/schematic")

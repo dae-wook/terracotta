@@ -1,28 +1,30 @@
 package com.daesoo.terracotta.post.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
+import com.daesoo.terracotta.common.entity.BuildProgress;
 import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.common.entity.PostTag;
 import com.daesoo.terracotta.common.entity.SchematicPost;
 import com.daesoo.terracotta.common.entity.Tag;
+import com.daesoo.terracotta.common.repository.BuildProgressRepository;
 import com.daesoo.terracotta.common.repository.MemberRepository;
 import com.daesoo.terracotta.common.repository.PostTagRepository;
 import com.daesoo.terracotta.common.repository.SchematicPostRepository;
 import com.daesoo.terracotta.common.repository.TagRepository;
 import com.daesoo.terracotta.common.util.FileUtil;
+import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.post.dto.FileNameDto;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
@@ -41,6 +43,7 @@ public class SchematicPostService {
 	private final PostTagRepository postTagRepository;
 	private final TagRepository tagRepository;
 	private final MemberRepository memberRepository;
+	private final BuildProgressRepository buildProgressRepository;
 	private final FileUtil fileUtil;
 	private final SchemeParser schemParser;
 	
@@ -143,13 +146,19 @@ public class SchematicPostService {
 		return true;
 	}
 
-	public SchematicPostResponseDto getSchematicPost(Long schematicPostId) {
+	public SchematicPostResponseDto getSchematicPost(Long schematicPostId, UserDetailsImpl userDetails) {
 		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage())
 				);
+		Member member = null;
+		if(userDetails != null) {
+			member = userDetails.getUser();
+		}
+		Optional<BuildProgress> optionalBuildProgress = buildProgressRepository.findBySchematicPostAndMember(schematicPost, member);
 		
 		
-		return SchematicPostResponseDto.of(schematicPost);
+		
+		return SchematicPostResponseDto.of(schematicPost, optionalBuildProgress.isPresent() ? optionalBuildProgress.get() : null);
 	}
 	
 //	@Async

@@ -3,10 +3,9 @@ package com.daesoo.terracotta.post.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.daesoo.terracotta.comment.dto.CommentResponseDto;
-import com.daesoo.terracotta.common.entity.PostTag;
+import com.daesoo.terracotta.buildprogress.dto.BuildProgressInScheamticPostResponseDto;
+import com.daesoo.terracotta.common.entity.BuildProgress;
 import com.daesoo.terracotta.common.entity.SchematicPost;
-import com.daesoo.terracotta.schematic.util.SchematicDto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -25,8 +24,6 @@ public class SchematicPostResponseDto {
 	
 	private String memberName;
 	
-	private String image;
-	
 	private List<ImageResponseDto> images;
 	
 	private int buyCount;
@@ -38,6 +35,8 @@ public class SchematicPostResponseDto {
 	private float star;
 	
 	private int size;
+	
+	private BuildProgressInScheamticPostResponseDto buildProgress;
 	
 	private LocalDateTime createdAt;
 	
@@ -55,8 +54,26 @@ public class SchematicPostResponseDto {
 				.size(schematicPost.getSize())
 				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
 				.memberName(schematicPost.getMember().getMemberName())
-				.image(schematicPost.getImage())
 				.images(schematicPost.getImages().stream().map(ImageResponseDto::of).toList())
+				.createdAt(schematicPost.getCreatedAt())
+				.modifiedAt(schematicPost.getModifiedAt())
+				.build();
+	}
+	
+	public static SchematicPostResponseDto of(SchematicPost schematicPost, BuildProgress buildProgress) {
+		return SchematicPostResponseDto.builder()
+				.id(schematicPost.getId())
+				.title(schematicPost.getTitle())
+				.description(schematicPost.getContent())
+				.buyCount(schematicPost.getBuyCount())
+				.commentCount(schematicPost.getCommentCount())
+				.price(schematicPost.getPrice())
+				.star(schematicPost.getStar())
+				.size(schematicPost.getSize())
+				.tags(schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList())
+				.memberName(schematicPost.getMember().getMemberName())
+				.images(schematicPost.getImages().stream().map(ImageResponseDto::of).toList())
+				.buildProgress(buildProgress != null ? BuildProgressInScheamticPostResponseDto.of(buildProgress) : null)
 				.createdAt(schematicPost.getCreatedAt())
 				.modifiedAt(schematicPost.getModifiedAt())
 				.build();
