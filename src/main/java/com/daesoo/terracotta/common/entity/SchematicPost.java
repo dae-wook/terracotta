@@ -151,4 +151,12 @@ public class SchematicPost extends TimeStamp{
         }
     }
 
+	public void increaseBuyCount() {
+	    this.buyCount++;
+	}
+
+	public void decreaseBuyCount() {
+		this.buyCount--;
+	}
+
 }

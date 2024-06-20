@@ -4,13 +4,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.daesoo.terracotta.buildprogress.dto.BuildProgressInScheamticPostResponseDto;
+import com.daesoo.terracotta.buildprogress.dto.BuildProgressRequestDto;
 import com.daesoo.terracotta.buildprogress.dto.BuildProgressResponseDto;
 import com.daesoo.terracotta.buildprogress.service.BuildProgressService;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
@@ -50,4 +55,30 @@ public class BuildProgressController {
 		
 		return ResponseDto.success(HttpStatus.OK, buildProgressService.getBuildProgressListByLoginMember(userDetails.getUser(), page, size));
 	}
+	
+	@PutMapping("/{buildProgressId}")
+	public ResponseDto<BuildProgressInScheamticPostResponseDto> updateBuildProgress(
+			@AuthenticationPrincipal UserDetailsImpl userDetails,
+			@PathVariable("buildProgressId") Long buildProgressId,
+			@RequestBody BuildProgressRequestDto dto) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, buildProgressService.updateBuildProgress(userDetails.getUser(), buildProgressId, dto));
+	}
+	
+	@DeleteMapping("/{buildProgressId}")
+	public ResponseDto<Boolean> deleteBuildProgress(
+			@AuthenticationPrincipal UserDetailsImpl userDetails,
+			@PathVariable("buildProgressId") Long buildProgressId) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, buildProgressService.deleteBuildProgress(userDetails.getUser(), buildProgressId));
+	}
+	
 }

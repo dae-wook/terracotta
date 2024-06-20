@@ -58,9 +58,6 @@ public class SchematicPostController {
 	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
 	    }
 		
-		System.out.println(schematicPostRequestDto.getTags());
-		System.out.println(schematicPostRequestDto.getTitle());
-		
 		return ResponseDto.success(HttpStatus.OK, schematicPostService.updateSchematicPost(schematicPostId, schematicPostRequestDto, userDetails.getUser()));
 	}
 	

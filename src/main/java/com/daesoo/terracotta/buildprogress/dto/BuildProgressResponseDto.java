@@ -14,15 +14,15 @@ public class BuildProgressResponseDto {
 	
 	private Long id;
 	
-	private String position;
+	private String cameraPosition;
 	
-	private String target;
+	private String cameraTarget;
 	
-	private String hiddenMateriacls;
+	private String hiddenMaterials;
 	
-	private String start;
+	private String visibleRangeStart;
 	
-	private String end;
+	private String visibleRangeEnd;
 	
 	private SchematicPostResponseDto schmaticPost;
 	
@@ -34,11 +34,11 @@ public class BuildProgressResponseDto {
 	public static BuildProgressResponseDto of(BuildProgress buildProgress) {
 		return BuildProgressResponseDto.builder()
 				.id(buildProgress.getId())
-				.position(buildProgress.getPosition())
-				.target(buildProgress.getTarget())
-				.hiddenMateriacls(buildProgress.getHiddenMateriacls())
-				.start(buildProgress.getStart())
-				.end(buildProgress.getEnd())
+				.cameraPosition(buildProgress.getCameraPosition())
+				.cameraTarget(buildProgress.getCameraTarget())
+				.hiddenMaterials(buildProgress.getHiddenMateriacls())
+				.visibleRangeStart(buildProgress.getVisibleRangeStart())
+				.visibleRangeEnd(buildProgress.getVisibleRangeEnd())
 				.schmaticPost(SchematicPostResponseDto.of(buildProgress.getSchematicPost()))
 				.createdAt(buildProgress.getCreatedAt())
 				.build();

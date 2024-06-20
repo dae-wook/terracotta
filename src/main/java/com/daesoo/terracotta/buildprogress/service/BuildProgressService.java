@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.daesoo.terracotta.buildprogress.dto.BuildProgressInScheamticPostResponseDto;
+import com.daesoo.terracotta.buildprogress.dto.BuildProgressRequestDto;
 import com.daesoo.terracotta.buildprogress.dto.BuildProgressResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.entity.BuildProgress;
@@ -32,7 +34,14 @@ public class BuildProgressService {
 		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage()));
 		
+		if(buildProgressRepository.findBySchematicPostAndMember(schematicPost, member).isPresent()) {
+			throw new IllegalArgumentException(ErrorMessage.DUPLICATE_REQUEST.getMessage());
+		}
+		
 		BuildProgress buildProgress = BuildProgress.create(member, schematicPost);
+		
+		
+		schematicPost.increaseBuyCount();
 		
 		buildProgressRepository.save(buildProgress);
 		
@@ -46,6 +55,41 @@ public class BuildProgressService {
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		
 		return buildProgressRepository.findAllByMember(pageable, member).map(BuildProgressResponseDto :: of);
+	}
+
+	@Transactional
+	public BuildProgressInScheamticPostResponseDto updateBuildProgress(Member user, Long buildProgressId, BuildProgressRequestDto dto) {
+		
+		BuildProgress buildProgress = buildProgressRepository.findById(buildProgressId).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage()));
+		
+		if (user.getId() != buildProgress.getMember().getId()) {
+			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
+		}
+		
+		
+		buildProgress.update(dto);
+		
+		
+		return BuildProgressInScheamticPostResponseDto.of(buildProgress);
+	}
+
+
+	@Transactional
+	public Boolean deleteBuildProgress(Member user, Long buildProgressId) {
+		
+		BuildProgress buildProgress = buildProgressRepository.findById(buildProgressId).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage()));
+		
+		if (user.getId() != buildProgress.getMember().getId()) {
+			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
+		}
+		
+		buildProgress.getSchematicPost().decreaseBuyCount();
+		
+		buildProgressRepository.delete(buildProgress);
+		
+		return true;
 	}
 }
 
