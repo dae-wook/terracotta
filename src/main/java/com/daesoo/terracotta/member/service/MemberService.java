@@ -4,15 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.daesoo.terracotta.comment.dto.CommentResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.entity.EmailVerification;
 import com.daesoo.terracotta.common.entity.Member;
@@ -27,11 +22,10 @@ import com.daesoo.terracotta.common.repository.SchematicPostRepository;
 import com.daesoo.terracotta.common.util.MailUtil;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
-import com.daesoo.terracotta.member.dto.LoginHistoryResponseDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
+import com.daesoo.terracotta.member.dto.PasswordResetRequestDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
-import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -193,6 +187,44 @@ public class MemberService {
 		// TODO Auto-generated method stub
 		memberRepository.delete(user);
 		return "탈퇴 성공";
+	}
+
+	@Transactional
+	public LocalDateTime sendPasswordResetEmail(String email) {
+		Member member = memberRepository.findByEmail(email).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.MEMBER_NOT_FOUND.getMessage()));
+		
+		//비밀번호 리셋 메일을 보내고 1분이 지나지 않았을때 예외처리(짧은시간에 여러번 보내는 것 방지)
+		if(member.getPasswordResetExpiry() != null && LocalDateTime.now().isBefore(member.getPasswordResetExpiry().minusMinutes(4))) {
+			throw new IllegalArgumentException(ErrorMessage.INVALID_AUTHENTICATION_REQUEST.getMessage());
+		}
+		
+		return member.passwordResetSetting(mailUtil.sendResetPasswordEmail(email));
+		
+	}
+
+	@Transactional
+	public Boolean resetPassword(PasswordResetRequestDto passwordResetRequestDto) {
+		// TODO Auto-generated method stub
+		
+		Member member = memberRepository.findByPasswordResetKey(passwordResetRequestDto.getKey()).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.MEMBER_NOT_FOUND.getMessage()));
+		
+		if(member.getPasswordResetExpiry().isBefore(LocalDateTime.now())) {
+			throw new IllegalArgumentException(ErrorMessage.EXPIRED_AUTHENTICATION.getMessage());
+		}
+		
+		if(passwordEncoder.matches(passwordResetRequestDto.getPassword(), member.getPassword())) {
+			throw new BadCredentialsException(ErrorMessage.SAME_PASSWORD.getMessage());
+		}
+		
+		String encodedPassword = passwordEncoder.encode(passwordResetRequestDto.getPassword());
+		
+		member.resetPassword(encodedPassword);
+		
+		member.clearResetPasswordInfo();
+		
+		return true;
 	}
 
 	

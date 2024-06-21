@@ -2,7 +2,6 @@ package com.daesoo.terracotta.member.controller;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,22 +11,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.daesoo.terracotta.comment.dto.CommentResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.dto.ResponseDto;
 import com.daesoo.terracotta.common.exception.UnauthorizedException;
 import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
-import com.daesoo.terracotta.member.dto.LoginHistoryResponseDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
+import com.daesoo.terracotta.member.dto.PasswordResetRequestDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
 import com.daesoo.terracotta.member.service.MemberService;
-import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -58,6 +54,18 @@ public class MemberController {
 	    }
 		return ResponseDto.success(HttpStatus.CREATED, memberService.resign(userDetails.getUser()));
 	}
+	
+	@PostMapping("/password/forgot")
+    public ResponseDto<LocalDateTime> forgotPassword(@RequestBody EmailRequestDto emailRequestDto) {
+        
+        return ResponseDto.success(HttpStatus.OK, memberService.sendPasswordResetEmail(emailRequestDto.getEmail()));
+    }
+	
+	@PostMapping("/password/reset")
+    public ResponseDto<Boolean> resetPassword(@RequestBody PasswordResetRequestDto passwordResetRequestDto) {
+        
+        return ResponseDto.success(HttpStatus.OK, memberService.resetPassword(passwordResetRequestDto));
+    }
 	
 	@PostMapping("/login")
 	public ResponseDto<MemberResponseDto> login(

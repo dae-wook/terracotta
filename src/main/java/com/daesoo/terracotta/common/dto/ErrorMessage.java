@@ -29,6 +29,7 @@ public enum ErrorMessage {
     WRONG_USERID("userId가 일치하지 않습니다."),
     WRONG_PASSWORD("패스워드가 틀렸습니다."),
     WRONG_EMAIL_OR_PASSWORD("이메일 또는 패스워드가 일치하지 않습니다."),
+    SAME_PASSWORD("기존과 동일한 비밀번호로는 변경이 불가합니다."),
     WRONG_JWT_TOKEN("JWT Token이 잘못되었습니다."),
     OUT_OF_STAR_RANGE("별점 범위를 벗어났습니다."),
     DUPLICATE_REQUEST("중복된 요청입니다."),
