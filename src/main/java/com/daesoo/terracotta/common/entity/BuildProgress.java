@@ -2,6 +2,7 @@ package com.daesoo.terracotta.common.entity;
 
 import com.daesoo.terracotta.buildprogress.dto.BuildProgressRequestDto;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,11 +34,8 @@ public class BuildProgress extends TimeStamp{
 		   end: x y z
 	} */
 	
-	private String cameraPosition;
-	private String cameraTarget;
-	private String hiddenMateriacls;
-	private String visibleRangeStart;
-	private String visibleRangeEnd;
+	@Column(length = 500)
+	private String setting;
     
     
     @ManyToOne
@@ -48,11 +46,7 @@ public class BuildProgress extends TimeStamp{
     
     public static BuildProgress create(Member member, SchematicPost schematicPost) {
     	return BuildProgress.builder()
-    			.cameraPosition(null)
-    			.cameraTarget(null)
-    			.hiddenMateriacls(null)
-    			.visibleRangeStart(null)
-    			.visibleRangeEnd(null)
+    			.setting(null)
     			.member(member)
     			.schematicPost(schematicPost)
     			.build();
@@ -60,11 +54,7 @@ public class BuildProgress extends TimeStamp{
     }
     
     public void update(BuildProgressRequestDto dto) {
-    	this.cameraPosition = dto.getCameraPosition();
-    	this.cameraTarget = dto.getCameraTarget();
-    	this.hiddenMateriacls = dto.getHiddenMaterials();
-    	this.visibleRangeStart = dto.getVisibleRangeStart();
-    	this.visibleRangeEnd = dto.getVisibleRangeEnd();
+    	this.setting = dto.getSetting();
     }
     
 

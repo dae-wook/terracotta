@@ -21,6 +21,7 @@ import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
+import com.daesoo.terracotta.member.dto.PasswordChangeRequestDto;
 import com.daesoo.terracotta.member.dto.PasswordResetRequestDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
 import com.daesoo.terracotta.member.service.MemberService;
@@ -65,6 +66,18 @@ public class MemberController {
     public ResponseDto<Boolean> resetPassword(@RequestBody PasswordResetRequestDto passwordResetRequestDto) {
         
         return ResponseDto.success(HttpStatus.OK, memberService.resetPassword(passwordResetRequestDto));
+    }
+	
+	@PostMapping("/password/change")
+    public ResponseDto<Boolean> changePassword(
+    		@AuthenticationPrincipal UserDetailsImpl userDetails,
+    		@RequestBody PasswordChangeRequestDto passwordChangeRequestDto) {
+        
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+        return ResponseDto.success(HttpStatus.OK, memberService.changePassword(userDetails.getUser(), passwordChangeRequestDto));
     }
 	
 	@PostMapping("/login")

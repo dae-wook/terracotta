@@ -27,7 +27,7 @@ public enum ErrorMessage {
     BLOG_DUPLICATION("해당유저는 이미 블로그를 가지고 있습니다."),
     WRONG_EMAIL("해당 이메일의 유저정보가 없습니다."),
     WRONG_USERID("userId가 일치하지 않습니다."),
-    WRONG_PASSWORD("패스워드가 틀렸습니다."),
+    WRONG_PASSWORD("패스워드가 일치하지 않습니다."),
     WRONG_EMAIL_OR_PASSWORD("이메일 또는 패스워드가 일치하지 않습니다."),
     SAME_PASSWORD("기존과 동일한 비밀번호로는 변경이 불가합니다."),
     WRONG_JWT_TOKEN("JWT Token이 잘못되었습니다."),

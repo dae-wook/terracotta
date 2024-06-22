@@ -14,15 +14,7 @@ public class BuildProgressInScheamticPostResponseDto {
 	
 	private Long id;
 	
-	private String cameraPosition;
-	
-	private String cameraTarget;
-	
-	private String hiddenMaterials;
-	
-	private String visibleRangestart;
-	
-	private String visibleRangeEnd;
+	private String setting;
 	
 	private LocalDateTime createdAt;
 	
@@ -32,11 +24,7 @@ public class BuildProgressInScheamticPostResponseDto {
 	public static BuildProgressInScheamticPostResponseDto of(BuildProgress buildProgress) {
 		return BuildProgressInScheamticPostResponseDto.builder()
 				.id(buildProgress.getId())
-				.cameraPosition(buildProgress.getCameraPosition())
-				.cameraTarget(buildProgress.getCameraTarget())
-				.hiddenMaterials(buildProgress.getHiddenMateriacls())
-				.visibleRangestart(buildProgress.getVisibleRangeStart())
-				.visibleRangeEnd(buildProgress.getVisibleRangeEnd())
+				.setting(buildProgress.getSetting())
 				.createdAt(buildProgress.getCreatedAt())
 				.build();
 				

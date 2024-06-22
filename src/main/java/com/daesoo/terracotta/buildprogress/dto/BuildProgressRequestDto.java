@@ -16,16 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BuildProgressRequestDto {
 	
-	private String cameraPosition;
+	private String setting;
 	
-	private String cameraTarget;
-	
-	private String hiddenMaterials;
-	
-	private String visibleRangeStart;
-	
-	private String visibleRangeEnd;
-	
-	private LocalDateTime createdAt;
 	
 }

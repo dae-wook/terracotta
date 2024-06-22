@@ -24,6 +24,7 @@ import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
+import com.daesoo.terracotta.member.dto.PasswordChangeRequestDto;
 import com.daesoo.terracotta.member.dto.PasswordResetRequestDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
 
@@ -223,6 +224,20 @@ public class MemberService {
 		member.resetPassword(encodedPassword);
 		
 		member.clearResetPasswordInfo();
+		
+		return true;
+	}
+
+	@Transactional
+	public Boolean changePassword(Member member, PasswordChangeRequestDto passwordChangeRequestDto) {
+
+		if(!passwordEncoder.matches(passwordChangeRequestDto.getOldPassword(), member.getPassword())) {
+			throw new BadCredentialsException(ErrorMessage.WRONG_PASSWORD.getMessage());
+		}
+		
+		String encodedPassword = passwordEncoder.encode(passwordChangeRequestDto.getNewPassword());
+		
+		member.resetPassword(encodedPassword);
 		
 		return true;
 	}
