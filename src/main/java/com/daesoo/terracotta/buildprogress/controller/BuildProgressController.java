@@ -33,8 +33,8 @@ public class BuildProgressController {
 
 	private final BuildProgressService buildProgressService;
 	
-	@PostMapping
-	public ResponseDto<BuildProgressResponseDto> createBuildProgress(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("schematicPostId") Long schematicPostId) {
+	@PostMapping("{schematicPostId}")
+	public ResponseDto<BuildProgressResponseDto> createBuildProgress(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable("schematicPostId") Long schematicPostId) {
 		
 		if (userDetails == null) {
 	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());

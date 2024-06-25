@@ -1,17 +1,12 @@
 package com.daesoo.terracotta.schematic.util;
 
-import java.util.List;
-import java.util.Map;
-
-import org.jnbt.Tag;
+import com.daesoo.terracotta.buildprogress.dto.BuildProgressInScheamticPostResponseDto;
+import com.daesoo.terracotta.common.entity.BuildProgress;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.sandrohc.schematic4j.schematic.types.Pair;
-import net.sandrohc.schematic4j.schematic.types.SchematicBlock;
-import net.sandrohc.schematic4j.schematic.types.SchematicBlockPos;
 
 @Getter
 
@@ -24,5 +19,10 @@ public class SchematicDto {
 	private int height;
 	private int length;
 	private int size;
+	private BuildProgressInScheamticPostResponseDto buildProgress;
 	byte[] blockData;
+	
+	public void setBuildProgress(BuildProgress buildProgress) {
+		this.buildProgress = BuildProgressInScheamticPostResponseDto.of(buildProgress);
+	}
 }

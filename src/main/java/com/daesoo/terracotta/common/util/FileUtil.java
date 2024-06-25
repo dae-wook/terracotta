@@ -15,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.daesoo.terracotta.common.entity.BuildProgress;
 import com.daesoo.terracotta.common.entity.Image;
 import com.daesoo.terracotta.post.dto.FileNameDto;
 import com.daesoo.terracotta.schematic.util.SchematicDto;
@@ -396,6 +397,30 @@ public class FileUtil {
 			
 			ObjectMapper mapper = new ObjectMapper();
             SchematicDto schematicDto = mapper.readValue(new String(content, StandardCharsets.UTF_8), SchematicDto.class);
+            
+			return schematicDto;
+
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public SchematicDto downloadSchematicFileToSchematicDto(String fileName, BuildProgress buildProgress) {
+		try {
+			InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+
+
+			Storage storage = StorageOptions.newBuilder().setProjectId(gcpProjectId).setCredentials(GoogleCredentials.fromStream(inputStream)).build().getService();
+			byte[] content = storage.readAllBytes(gcpBucketId, "schematics/" + fileName);
+			
+			
+			ObjectMapper mapper = new ObjectMapper();
+            SchematicDto schematicDto = mapper.readValue(new String(content, StandardCharsets.UTF_8), SchematicDto.class);
+            if(buildProgress != null) {
+            	
+            	schematicDto.setBuildProgress(buildProgress);
+            }
             
 			return schematicDto;
 

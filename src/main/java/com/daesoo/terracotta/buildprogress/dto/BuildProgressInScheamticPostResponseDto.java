@@ -10,15 +10,12 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class BuildProgressInScheamticPostResponseDto {
+public class BuildProgressInScheamticPostResponseDto extends AbstractBuildProgressResponseDto {
 	
-	private Long id;
-	
-	private String setting;
-	
-	private LocalDateTime createdAt;
-	
-	
+    @Builder
+    public BuildProgressInScheamticPostResponseDto(Long id, String setting, LocalDateTime createdAt) {
+        super(id, setting, createdAt);
+    }
 	
 	
 	public static BuildProgressInScheamticPostResponseDto of(BuildProgress buildProgress) {

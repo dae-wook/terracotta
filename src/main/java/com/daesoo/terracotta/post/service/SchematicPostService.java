@@ -26,6 +26,7 @@ import com.daesoo.terracotta.common.repository.TagRepository;
 import com.daesoo.terracotta.common.util.FileUtil;
 import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.post.dto.FileNameDto;
+import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
 import com.daesoo.terracotta.post.dto.SchematicPostRequestDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 import com.daesoo.terracotta.schematic.util.SchematicDto;
@@ -162,25 +163,31 @@ public class SchematicPostService {
 	}
 	
 //	@Async
-	public SchematicDto getSchematic(Long schematicPostId) {
+	public SchematicDto getSchematic(Long schematicPostId, UserDetailsImpl userDetails) {
 		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage())
 				);
 		
+		Member member = null;
+		if(userDetails != null) {
+			member = userDetails.getUser();
+		}
+		Optional<BuildProgress> optionalBuildProgress = buildProgressRepository.findBySchematicPostAndMember(schematicPost, member);
 		
-		return fileUtil.downloadSchematicFileToSchematicDto(schematicPost.getFilePath());
+		SchematicDto schematicDto = fileUtil.downloadSchematicFileToSchematicDto(schematicPost.getFilePath(), optionalBuildProgress.isPresent() ? optionalBuildProgress.get() : null);
+		return schematicDto;
 	}
 
 
-	public Page<SchematicPostResponseDto> getSchematicPostList(Integer page, Integer size, Long[] tags) {
+	public Page<SchematicPostListResponseDto> getSchematicPostList(Integer page, Integer size, Long[] tags) {
 		
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		
 		if(tags[0] == 0) {
-			return schematicPostRepository.findAll(pageable).map(SchematicPostResponseDto::of);
+			return schematicPostRepository.findAll(pageable).map(SchematicPostListResponseDto::of);
 		}
 
-		return postTagRepository.findPostsByTags(pageable, tags, tags.length).map(SchematicPostResponseDto::of);
+		return postTagRepository.findPostsByTags(pageable, tags, tags.length).map(SchematicPostListResponseDto::of);
 	}
 	
 
