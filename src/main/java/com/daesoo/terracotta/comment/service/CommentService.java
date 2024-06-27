@@ -1,5 +1,8 @@
 package com.daesoo.terracotta.comment.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -8,12 +11,16 @@ import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.comment.dto.CommentRequestDto;
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
+import com.daesoo.terracotta.comment.dto.ReplyRequestDto;
+import com.daesoo.terracotta.comment.dto.ReplyResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.dto.NotificationType;
 import com.daesoo.terracotta.common.entity.Comment;
 import com.daesoo.terracotta.common.entity.Member;
+import com.daesoo.terracotta.common.entity.Reply;
 import com.daesoo.terracotta.common.entity.SchematicPost;
 import com.daesoo.terracotta.common.repository.CommentRepository;
+import com.daesoo.terracotta.common.repository.ReplyRepository;
 import com.daesoo.terracotta.common.repository.SchematicPostRepository;
 import com.daesoo.terracotta.notification.NotificationService;
 import com.daesoo.terracotta.notification.dto.NotificationRequestDto;
@@ -27,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class CommentService {
 	
 	private final CommentRepository commentRepository;
+	private final ReplyRepository replyRepository;
 	private final SchematicPostRepository schematicPostRepository;
 	private final NotificationService notificationService;
 	
@@ -110,6 +118,74 @@ public class CommentService {
 		
 		
 		return "수정 성공";
+	}
+
+	@Transactional
+	public ReplyResponseDto createReply(ReplyRequestDto dto, Member member) {
+
+		Comment comment = commentRepository.findById(dto.getCommentId()).orElseThrow( 
+				() -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
+				);
+		
+		SchematicPost schematicPost = comment.getSchematicPost();
+		
+		comment.getSchematicPost().addComment(comment);
+		
+		commentRepository.save(comment);
+		
+		Reply reply = Reply.create(dto, comment, member);
+		
+		
+		replyRepository.save(reply);
+		
+		//알림 받을 Member 세팅
+		Set<Member> notificationTargetMember = new HashSet<>();
+		if(comment.getReplies().size() > 0) {
+			for(Reply targetReply : comment.getReplies()) {
+				notificationTargetMember.add(targetReply.getMember());
+			}
+			
+		}
+		
+		notificationTargetMember.add(comment.getMember());
+		notificationTargetMember.add(schematicPost.getMember());
+		
+		notificationService.createReplyNotification(NotificationRequestDto.create(dto.getContent(), NotificationType.COMMENT), schematicPost.getMember(), comment.getMember(), member, notificationTargetMember);
+		
+		return ReplyResponseDto.of(reply);
+	}
+
+	public Boolean updateReply(Long replyId, ReplyRequestDto dto, Member user) {
+		Reply reply = replyRepository.findById(replyId).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
+				);
+		
+		if(reply.getMember().getId() != user.getId()) {
+			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
+		}
+		
+		
+		reply.update(dto);
+		
+		
+		return true;
+	}
+
+	public Boolean deleteReply(Long replyId, Member user) {
+		Reply reply = replyRepository.findById(replyId).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
+				);
+		
+		if(reply.getMember().getId() != user.getId()) {
+			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
+		}
+		
+		SchematicPost schematicPost = reply.getComment().getSchematicPost();
+		schematicPost.decreaseCommentCount();
+		
+		replyRepository.delete(reply);
+		
+		return true;
 	}
 
 }

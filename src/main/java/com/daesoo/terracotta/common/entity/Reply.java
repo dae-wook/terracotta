@@ -1,29 +1,24 @@
 package com.daesoo.terracotta.common.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.daesoo.terracotta.comment.dto.ReplyRequestDto;
 
-import com.daesoo.terracotta.comment.dto.CommentRequestDto;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "comments")
+@Entity(name = "replies")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Comment extends TimeStamp{
+public class Reply extends TimeStamp{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,30 +27,22 @@ public class Comment extends TimeStamp{
     @Column(nullable = false)
     private String content;
     
-    @Column(nullable = false)
-    private float star;
-    
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private List<Reply> replies = new ArrayList<>();
-    
     @ManyToOne
     private Member member;
     
     @ManyToOne
-    private SchematicPost schematicPost;
+    private Comment comment;
     
-    public static Comment create(CommentRequestDto dto, SchematicPost schematicPost, Member member) {
-    	return Comment.builder()
+    public static Reply create(ReplyRequestDto dto, Comment comment, Member member) {
+    	return Reply.builder()
     			.content(dto.getContent())
-    			.star(dto.getStar())
+    			.comment(comment)
     			.member(member)
-    			.schematicPost(schematicPost)
     			.build();
     }
 
-	public void update(CommentRequestDto dto) {
+	public void update(ReplyRequestDto dto) {
 		this.content = dto.getContent();
-		this.star = dto.getStar();
 		
 	}
 

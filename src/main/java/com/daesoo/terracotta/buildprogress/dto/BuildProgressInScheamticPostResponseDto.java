@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class BuildProgressInScheamticPostResponseDto extends AbstractBuildProgressResponseDto {
 	
     @Builder

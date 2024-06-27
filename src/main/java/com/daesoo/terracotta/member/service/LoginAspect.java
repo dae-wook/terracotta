@@ -46,7 +46,5 @@ public class LoginAspect {
 		LoginHistory loginHistory = LoginHistory.create(result, ipInfo);
 		
 		loginHistoryRepository.save(loginHistory);
-		
-        System.out.println("로그인 성공: " + ipInfo.getIp());
     }
 }

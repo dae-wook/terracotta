@@ -109,6 +109,11 @@ public class SchematicPost extends TimeStamp{
     	this.star = averageStar();
 		
 	}
+	
+	public void decreaseCommentCount() {
+		this.commentCount--;
+		
+	}
 
 	public void updateComment(Comment comment, float oldStar) {
 		// TODO Auto-generated method stub

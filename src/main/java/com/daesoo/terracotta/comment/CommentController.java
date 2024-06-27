@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.daesoo.terracotta.comment.dto.CommentRequestDto;
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
+import com.daesoo.terracotta.comment.dto.ReplyRequestDto;
+import com.daesoo.terracotta.comment.dto.ReplyResponseDto;
 import com.daesoo.terracotta.comment.service.CommentService;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.dto.ResponseDto;
@@ -76,6 +78,44 @@ public class CommentController {
 	    }
 		
 		return ResponseDto.success(HttpStatus.OK, commentService.updateComment(commentId, dto, userDetails.getUser()));
+	}
+	
+	@PostMapping("/replies")
+	public ResponseDto<ReplyResponseDto> createReply(
+			@RequestBody ReplyRequestDto dto,
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, commentService.createReply(dto, userDetails.getUser()));
+		
+	}
+	
+	@PutMapping("/replies/{replyId}")
+	public ResponseDto<Boolean> updateReply(
+			@PathVariable("replyId") Long replyId,
+			ReplyRequestDto dto,
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, commentService.updateReply(replyId, dto, userDetails.getUser()));
+	}
+	
+	@DeleteMapping("/replies/{replyId}")
+	public ResponseDto<Boolean> deleteReply(
+			@PathVariable("commentId") Long replyId,
+			@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, commentService.deleteReply(replyId, userDetails.getUser()));
 	}
 	
 }

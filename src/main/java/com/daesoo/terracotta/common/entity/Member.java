@@ -3,6 +3,7 @@ package com.daesoo.terracotta.common.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
 
@@ -62,6 +63,7 @@ public class Member extends TimeStamp{
     
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<BuildProgress> buildProgress = new ArrayList<>();
+    
 
 
 	public LocalDateTime passwordResetSetting(String key) {
@@ -81,23 +83,16 @@ public class Member extends TimeStamp{
 		this.passwordResetExpiry = null;
 	}
 
-//    public static Member create(SignupRequestDto signupRequestDto, String encodedPassword) {
-//        return Member.builder()
-//                .userId(signupRequestDto.getUserId())
-//                .username(signupRequestDto.getUsername())
-//                .email(signupRequestDto.getEmail())
-//                .password(encodedPassword)
-//                .gender(signupRequestDto.getGender())
-//                .birthday(signupRequestDto.getBirthday())
-//                .build();
-//    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Member member = (Member) o;
+        return Objects.equals(id, member.id);
+    }
 
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-
-//    @PreRemove
-//    private void memberIdSetNullAtBoardWish() {
-//        this.getWishes().forEach(BoardWishMember::setMemberNull);
-//    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
