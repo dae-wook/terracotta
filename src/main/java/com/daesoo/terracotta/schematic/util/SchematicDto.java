@@ -23,6 +23,6 @@ public class SchematicDto {
 	byte[] blockData;
 	
 	public void setBuildProgress(BuildProgress buildProgress) {
-		this.buildProgress = BuildProgressInScheamticPostResponseDto.of(buildProgress);
+		this.buildProgress = buildProgress != null ?BuildProgressInScheamticPostResponseDto.of(buildProgress) : null;
 	}
 }

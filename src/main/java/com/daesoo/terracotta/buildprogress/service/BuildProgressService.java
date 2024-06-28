@@ -15,6 +15,7 @@ import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.common.entity.SchematicPost;
 import com.daesoo.terracotta.common.repository.BuildProgressRepository;
 import com.daesoo.terracotta.common.repository.SchematicPostRepository;
+import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -34,6 +35,10 @@ public class BuildProgressService {
 		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage()));
 		
+		if(schematicPost.getMember().equals(member)) {
+			throw new IllegalArgumentException(ErrorMessage.NO_PERMISSION.getMessage());
+		}
+		
 		if(buildProgressRepository.findBySchematicPostAndMember(schematicPost, member).isPresent()) {
 			throw new IllegalArgumentException(ErrorMessage.DUPLICATE_REQUEST.getMessage());
 		}
@@ -51,10 +56,11 @@ public class BuildProgressService {
 	}
 
 	
-	public Page<BuildProgressResponseDto> getBuildProgressListByLoginMember(Member member, Integer page, Integer size) {
+	public Page<SchematicPostResponseDto> getBuildProgressListByLoginMember(Member member, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-		
-		return buildProgressRepository.findAllByMember(pageable, member).map(BuildProgressResponseDto :: of);
+		buildProgressRepository.findAllByMember(pageable, member).map(SchematicPostResponseDto :: of);
+//		return buildProgressRepository.findAllByMember(pageable, member).map(BuildProgressResponseDto :: of);
+		return buildProgressRepository.findAllByMember(pageable, member).map(SchematicPostResponseDto :: of);
 	}
 
 	@Transactional

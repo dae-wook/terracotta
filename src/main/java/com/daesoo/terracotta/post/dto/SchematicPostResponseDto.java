@@ -41,5 +41,12 @@ public class SchematicPostResponseDto extends AbstractSchematicPostResponseDto{
 				.build();
 	}
 	
+	public static SchematicPostResponseDto of(BuildProgress buildProgress) {
+		return SchematicPostResponseDto.builder()
+				.schematicPost(buildProgress.getSchematicPost())
+				.buildProgress(buildProgress != null ? BuildProgressInScheamticPostResponseDto.of(buildProgress) : null)
+				.build();
+	}
+	
 	
 }

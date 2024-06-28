@@ -22,6 +22,7 @@ import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.dto.ResponseDto;
 import com.daesoo.terracotta.common.exception.UnauthorizedException;
 import com.daesoo.terracotta.member.UserDetailsImpl;
+import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +45,7 @@ public class BuildProgressController {
 	}
 	
 	@GetMapping
-	public ResponseDto<Page<BuildProgressResponseDto>> getBuildProgressListByLoginMember(
+	public ResponseDto<Page<SchematicPostResponseDto>> getBuildProgressListByLoginMember(
 			@AuthenticationPrincipal UserDetailsImpl userDetails,
 			@RequestParam(name="page", defaultValue = "1") Integer page,
             @RequestParam(name="size", defaultValue = "10") Integer size) {
