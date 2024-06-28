@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.member.UserDetailsServiceImpl;
 
 import io.jsonwebtoken.Claims;
@@ -57,13 +58,14 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String userId) {
+    public String createToken(Member member) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(userId)
+                        .setSubject(member.getEmail())
                         .claim(AUTHORIZATION_KEY, "ROLE_USER")
+                        .claim("nickname", member.getMemberName())
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)

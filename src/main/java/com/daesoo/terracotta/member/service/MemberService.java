@@ -72,7 +72,7 @@ public class MemberService {
 		Member newMember = Member.create(signupRequestDto, encodedPassword);
 		memberRepository.save(newMember);
 		emailVerificationRepository.delete(emailVerification);
-		String token = jwtUtil.createToken(newMember.getEmail());
+		String token = jwtUtil.createToken(newMember);
 		
 		return MemberResponseDto.of(newMember, token, null);
 	}
@@ -88,7 +88,7 @@ public class MemberService {
 		
 
 		
-		String token = jwtUtil.createToken(member.getEmail());
+		String token = jwtUtil.createToken(member);
 		
 		return MemberResponseDto.of(member, token, ip);
 	}
