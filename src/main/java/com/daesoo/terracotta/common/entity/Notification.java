@@ -49,6 +49,11 @@ public class Notification extends TimeStamp{
     	
     	    	
     }
+
+	public void read() {
+		// TODO Auto-generated method stub
+		this.isRead = true;
+	}
     
     
 }

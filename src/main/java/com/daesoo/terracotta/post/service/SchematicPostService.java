@@ -192,14 +192,14 @@ public class SchematicPostService {
 	
 
 
-	public Page<SchematicPostResponseDto> getSchematicPostListByMemberName(String memberName, Integer page, Integer size) {
+	public Page<SchematicPostListResponseDto> getSchematicPostListByMemberName(String memberName, Integer page, Integer size) {
 		
 		Member member = memberRepository.findByMemberName(memberName).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.MEMBER_NOT_FOUND.getMessage()));
 		
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		
-		return schematicPostRepository.findAllByMember(pageable, member).map(SchematicPostResponseDto::of);
+		return schematicPostRepository.findAllByMember(pageable, member).map(SchematicPostListResponseDto::of);
 
 	}
 

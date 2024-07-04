@@ -46,5 +46,11 @@ public class NotificationService {
 		
 		return true;
 	}
+
+	@Transactional
+	public int deleteAllReadNotificationsByLoginMember(Member user) {
+
+		return notificationRepository.deleteByIsReadTrueAndMember(user);
+	}
 	
 }

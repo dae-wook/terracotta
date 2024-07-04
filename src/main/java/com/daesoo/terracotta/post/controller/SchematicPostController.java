@@ -72,7 +72,7 @@ public class SchematicPostController {
 	}
 	
 	@GetMapping("member/{nickname}")
-	public ResponseDto<Page<SchematicPostResponseDto>> getSchematicPostListByMemberName(
+	public ResponseDto<Page<SchematicPostListResponseDto>> getSchematicPostListByMemberName(
 			@PathVariable("nickname") String nickname,
             @RequestParam(name="page", defaultValue = "1") Integer page,
             @RequestParam(name="size", defaultValue = "10") Integer size
