@@ -39,6 +39,9 @@ public class Member extends TimeStamp{
     @Column(nullable = false, unique = true)
     private String memberName;
     
+    @Column(length = 500)
+    private String introduction;
+    
     private String passwordResetKey;
 
     private LocalDateTime passwordResetExpiry;
@@ -81,6 +84,10 @@ public class Member extends TimeStamp{
 	public void clearResetPasswordInfo() {
 		this.passwordResetKey = null;
 		this.passwordResetExpiry = null;
+	}
+	
+	public void updateIntroduction(String introduction) {
+		this.introduction = introduction;
 	}
 
     @Override

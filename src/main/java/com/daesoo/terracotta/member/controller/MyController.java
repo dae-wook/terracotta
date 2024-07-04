@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,7 @@ import com.daesoo.terracotta.common.exception.UnauthorizedException;
 import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.member.dto.LoginHistoryResponseDto;
 import com.daesoo.terracotta.member.service.MyService;
+import com.daesoo.terracotta.notification.NotificationResponseDto;
 import com.daesoo.terracotta.post.dto.SchematicPostResponseDto;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,6 +71,29 @@ public class MyController {
 	    }
 		
 		return ResponseDto.success(HttpStatus.OK, myService.getSchematicPostListByLoginMember(userDetails.getUser(), page, size, tags));
+	}
+	
+	@PutMapping("/intro")
+	public ResponseDto<String> updateIntroduction(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody String introduction) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, myService.updateIntroduction(userDetails.getUser(), introduction));
+	}
+	
+	@GetMapping("/notifications") 
+	public ResponseDto<Page<NotificationResponseDto>>getNotificationByLoginMember(
+			@AuthenticationPrincipal UserDetailsImpl userDetails,
+			@RequestParam(name="page", defaultValue = "1") Integer page,
+            @RequestParam(name="size", defaultValue = "7") Integer size) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, myService.getNotificationByLoginMember(page, size, userDetails.getUser()));
 	}
 	
 	public String getClientIp(HttpServletRequest request) {
