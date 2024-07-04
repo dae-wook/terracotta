@@ -51,20 +51,17 @@ public class CommentService {
 	@Transactional
 	public CommentResponseDto createComment(CommentRequestDto dto, Member member) {
 		
-		if(dto.getStar() < 1.0f || dto.getStar() > 5.0f) {
-			throw new IllegalArgumentException(ErrorMessage.OUT_OF_STAR_RANGE.getMessage());
-		}
 		
 		SchematicPost schematicPost = schematicPostRepository.findById(dto.getSchematicPostId()).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage())
 				);
 		
 		//댓글을 이미 달았을때 Exception.. TODO: 성능 개선 여지 있음
-		for(Comment comment : schematicPost.getComments()) {
-			if(comment.getMember().getEmail().equals(member.getEmail())) {
-				throw new IllegalArgumentException(ErrorMessage.ALREADY_EXIST_COMMENT.getMessage());
-			}
-		}
+//		for(Comment comment : schematicPost.getComments()) {
+//			if(comment.getMember().getEmail().equals(member.getEmail())) {
+//				throw new IllegalArgumentException(ErrorMessage.ALREADY_EXIST_COMMENT.getMessage());
+//			}
+//		}
 		
 		
 		

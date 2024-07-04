@@ -47,7 +47,6 @@ public class Comment extends TimeStamp{
     public static Comment create(CommentRequestDto dto, SchematicPost schematicPost, Member member) {
     	return Comment.builder()
     			.content(dto.getContent())
-    			.star(dto.getStar())
     			.member(member)
     			.schematicPost(schematicPost)
     			.build();
@@ -55,7 +54,6 @@ public class Comment extends TimeStamp{
 
 	public void update(CommentRequestDto dto) {
 		this.content = dto.getContent();
-		this.star = dto.getStar();
 		
 	}
 

@@ -18,6 +18,5 @@ public class CommentRequestDto {
 
     private String content;
     
-    private Float star;
 	
 }
