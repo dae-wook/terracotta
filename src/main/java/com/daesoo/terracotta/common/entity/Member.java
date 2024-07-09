@@ -39,6 +39,8 @@ public class Member extends TimeStamp{
     @Column(nullable = false, unique = true)
     private String memberName;
     
+    private String profileImage;
+    
     @Column(length = 500)
     private String introduction;
     
@@ -88,6 +90,10 @@ public class Member extends TimeStamp{
 	
 	public void updateIntroduction(String introduction) {
 		this.introduction = introduction;
+	}
+	
+	public void updateProfileImage(String fileName) {
+		this.profileImage = fileName;
 	}
 
     @Override

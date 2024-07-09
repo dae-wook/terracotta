@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
@@ -19,6 +20,7 @@ import com.daesoo.terracotta.common.repository.MemberRepository;
 import com.daesoo.terracotta.common.repository.NotificationRepository;
 import com.daesoo.terracotta.common.repository.PostTagRepository;
 import com.daesoo.terracotta.common.repository.SchematicPostRepository;
+import com.daesoo.terracotta.common.util.FileUtil;
 import com.daesoo.terracotta.common.util.MailUtil;
 import com.daesoo.terracotta.member.dto.LoginHistoryResponseDto;
 import com.daesoo.terracotta.notification.NotificationResponseDto;
@@ -41,6 +43,7 @@ public class MyService {
 	private final NotificationRepository notificationRepository;
 	private final JwtUtil jwtUtil;
 	private final MailUtil mailUtil;
+	private final FileUtil fileUtil;
 
 	
 
@@ -104,6 +107,19 @@ public class MyService {
 		}
 		
 		return notifications.map(NotificationResponseDto :: of); 
+	}
+
+
+	@Transactional
+	public String updateProfileImage(MultipartFile image, Member user) {
+
+		
+		String fileName = fileUtil.uploadProfileImage(user.getId(), image);
+		
+		user.updateProfileImage(fileName);
+		memberRepository.save(user);
+		
+		return fileName;
 	}
 
 	

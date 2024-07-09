@@ -66,6 +66,7 @@ public class JwtUtil {
                         .setSubject(member.getEmail())
                         .claim(AUTHORIZATION_KEY, "ROLE_USER")
                         .claim("nickname", member.getMemberName())
+                        .claim("profileImage", member.getProfileImage())
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)

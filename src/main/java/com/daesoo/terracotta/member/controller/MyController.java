@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
@@ -81,6 +82,16 @@ public class MyController {
 	    }
 		
 		return ResponseDto.success(HttpStatus.OK, myService.updateIntroduction(userDetails.getUser(), introduction));
+	}
+	
+	@PutMapping("/profile-image")
+	public ResponseDto<String> updateProfileImage(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("image") MultipartFile image) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, myService.updateProfileImage(image, userDetails.getUser()));
 	}
 	
 	@GetMapping("/notifications") 

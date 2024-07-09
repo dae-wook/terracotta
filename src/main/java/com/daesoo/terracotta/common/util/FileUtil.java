@@ -90,6 +90,41 @@ public class FileUtil {
         throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
     }
 	
+    public String uploadProfileImage(Long memberId, MultipartFile image) {
+        try (InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream()) {
+
+
+            String originalImageFileName = image.getOriginalFilename();
+            String fileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
+
+            log.debug("업로드 시작");
+
+            StorageOptions options = StorageOptions.newBuilder()
+                    .setProjectId(gcpProjectId)
+                    .setCredentials(GoogleCredentials.fromStream(inputStream))
+                    .build();
+
+            Storage storage = options.getService();
+            Bucket imageBucket = storage.get(gcpBucketImageId, Storage.BucketGetOption.fields());
+
+
+            String saveImageFileName = memberId + checkImageFileExtension(originalImageFileName);
+
+            Blob schematicBlob = imageBucket.create("profile/" + saveImageFileName, image.getBytes(), image.getContentType());
+
+            if (schematicBlob != null) {
+                log.debug("업로드 성공");
+                return saveImageFileName;
+            }
+
+        } catch (Exception e) {
+            log.error("GCS에 저장 중 에러 발생", e);
+            throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+        }
+
+        throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
+    }
+    
 	public ArrayList<String> uploadImages(MultipartFile[] images) {
 
 		try{
@@ -117,7 +152,7 @@ public class FileUtil {
 				String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
 				imageNames.add(saveImageFileName);
 
-				Blob imageBlob = imageBucket.create(imageDirectory + "/" + saveImageFileName, imageFileData, image.getContentType());
+				Blob imageBlob = imageBucket.create(imageDirectory + "/thumbs" + saveImageFileName, imageFileData, image.getContentType());
 			}
 
 
@@ -189,7 +224,7 @@ public class FileUtil {
 	        Bucket imageBucket = storage.get(gcpBucketImageId, Storage.BucketGetOption.fields());
 
 	        for (Image fileName : fileNames) {
-	            Blob imageBlob = imageBucket.get(imageDirectory + "/" + fileName.getPath());
+	            Blob imageBlob = imageBucket.get(imageDirectory + "/thumbs" + fileName.getPath());
 	            if (imageBlob != null) {
 	                imageBlob.delete();
 	                log.debug("이미지 {} 삭제 성공", fileName);
@@ -216,7 +251,7 @@ public class FileUtil {
 
             Set<String> excludeFileNameSet = excludeFileNames.stream().collect(Collectors.toSet());
 
-            Iterable<Blob> blobs = bucket.list(Storage.BlobListOption.prefix(imageDirectory)).iterateAll();
+            Iterable<Blob> blobs = bucket.list(Storage.BlobListOption.prefix(imageDirectory + "/thumbs")).iterateAll();
             List<Blob> filesToDelete = StreamSupport.stream(blobs.spliterator(), false)
                     .filter(blob -> !excludeFileNameSet.contains(blob.getName()))
                     .collect(Collectors.toList());
@@ -273,7 +308,7 @@ public class FileUtil {
 	        Bucket imageBucket = storage.get(gcpBucketImageId, Storage.BucketGetOption.fields());
 
 	        for (String fileName : fileNames) {
-	            Blob imageBlob = imageBucket.get(imageDirectory + "/" + fileName);
+	            Blob imageBlob = imageBucket.get(imageDirectory + "/thumbs" + fileName);
 	            if (imageBlob != null) {
 	                imageBlob.delete();
 	                log.debug("이미지 {} 삭제 성공", fileName);
@@ -318,7 +353,7 @@ public class FileUtil {
 
 				String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
 
-				imageBlob.add(imageBucket.create(imageDirectory + "/" + saveImageFileName, imageFileData, image.getContentType()));
+				imageBlob.add(imageBucket.create(imageDirectory + "/thumbs" + saveImageFileName, imageFileData, image.getContentType()));
 				imageNames.add(saveImageFileName);
 			}
 			
