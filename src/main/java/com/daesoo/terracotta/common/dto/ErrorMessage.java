@@ -20,6 +20,7 @@ public enum ErrorMessage {
     ALREADY_EXIST_COMMENT("이미 해당 게시글에 댓글을 작성한 사용자입니다."),
     AUTHENTICATION_FAILED("JWT가 올바르지 않습니다"),
     ACCESS_DENIED("권한이 없습니다."),
+    REPLY_MISSMATCH("일치하지 않는 대댓글 대상입니다."),
     INTRODUCTION_TOO_LONG("소개는 500자 이내로 작성해야 합니다."),
     KEYWORD_NOT_FOUND("해당 키워드 검색 기록이 없습니다"),
     USERNAME_DUPLICATION("username이 중복됐습니다."),

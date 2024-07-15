@@ -115,13 +115,7 @@ public class SchematicPost extends TimeStamp{
 		
 	}
 
-	public void updateComment(Comment comment, float oldStar) {
-		// TODO Auto-generated method stub
-		this.totalStar -= oldStar;
-    	this.totalStar += comment.getStar();
-    	this.star = averageStar();
-		
-	}
+
 
 	public void update(SchematicPostRequestDto schematicPostRequestDto, SchematicDto schematicDto, String[] filePath) {
 

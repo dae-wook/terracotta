@@ -68,9 +68,9 @@ public class CommentController {
 	}
 	
 	@PutMapping("/{commentId}")
-	public ResponseDto<String> updateComment(
+	public ResponseDto<CommentResponseDto> updateComment(
 			@PathVariable("commentId") Long commentId,
-			CommentRequestDto dto,
+			@RequestBody CommentRequestDto dto,
 			@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		
 		if (userDetails == null) {
@@ -108,7 +108,7 @@ public class CommentController {
 	
 	@DeleteMapping("/replies/{replyId}")
 	public ResponseDto<Boolean> deleteReply(
-			@PathVariable("commentId") Long replyId,
+			@PathVariable("replyId") Long replyId,
 			@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		
 		if (userDetails == null) {

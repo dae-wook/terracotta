@@ -27,17 +27,20 @@ public class Reply extends TimeStamp{
     @Column(nullable = false)
     private String content;
     
+    private String taggedMember;
+    
     @ManyToOne
     private Member member;
     
     @ManyToOne
     private Comment comment;
     
-    public static Reply create(ReplyRequestDto dto, Comment comment, Member member) {
+    public static Reply create(ReplyRequestDto dto, Comment comment, Member member, String taggedMember) {
     	return Reply.builder()
     			.content(dto.getContent())
     			.comment(comment)
     			.member(member)
+    			.taggedMember(taggedMember)
     			.build();
     }
 

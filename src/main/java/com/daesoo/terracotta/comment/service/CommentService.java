@@ -1,6 +1,7 @@
 package com.daesoo.terracotta.comment.service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -97,7 +98,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public String updateComment(Long commentId, CommentRequestDto dto, Member user) {
+	public CommentResponseDto updateComment(Long commentId, CommentRequestDto dto, Member user) {
 		
 		Comment comment = commentRepository.findById(commentId).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
@@ -107,14 +108,11 @@ public class CommentService {
 			throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
 		}
 		
-		float oldStar = comment.getStar();
 		comment.update(dto);
 		
-		SchematicPost schematicPost = comment.getSchematicPost();
-		schematicPost.updateComment(comment, oldStar);
 		
 		
-		return "수정 성공";
+		return CommentResponseDto.of(comment);
 	}
 
 	@Transactional
@@ -124,13 +122,23 @@ public class CommentService {
 				() -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
 				);
 		
+		Optional<Reply> optionalReply = dto.getReplyId() != null ? replyRepository.findById(dto.getReplyId()) : null;
+		String taggedMember = null;
+		if(optionalReply != null && optionalReply.isPresent()) {
+			Reply tagTargetReply = optionalReply.get();
+			if(tagTargetReply.getComment().getId() != comment.getId()) {
+				throw new IllegalArgumentException(ErrorMessage.REPLY_MISSMATCH.getMessage());
+			}
+			taggedMember = tagTargetReply.getMember().getMemberName();
+		}
+		
 		SchematicPost schematicPost = comment.getSchematicPost();
 		
 		comment.getSchematicPost().addComment(comment);
 		
 		commentRepository.save(comment);
 		
-		Reply reply = Reply.create(dto, comment, member);
+		Reply reply = Reply.create(dto, comment, member, taggedMember);
 		
 		
 		replyRepository.save(reply);
@@ -138,8 +146,8 @@ public class CommentService {
 		//알림 받을 Member 세팅
 		Set<Member> notificationTargetMember = new HashSet<>();
 		if(comment.getReplies().size() > 0) {
-			for(Reply targetReply : comment.getReplies()) {
-				notificationTargetMember.add(targetReply.getMember());
+			for(Reply targetMemberReply : comment.getReplies()) {
+				notificationTargetMember.add(targetMemberReply.getMember());
 			}
 			
 		}

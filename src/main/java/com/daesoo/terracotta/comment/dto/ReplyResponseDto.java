@@ -19,16 +19,19 @@ public class ReplyResponseDto {
     
     private String memberName;
     
+    private String taggedMember;
+    
     private LocalDateTime createdAt;
     
     private LocalDateTime modifiedAt;
-
+    
     public static ReplyResponseDto of(Reply reply) {
     	return ReplyResponseDto.builder()
     			.id(reply.getId())
     			.commentId(reply.getComment().getId())
     			.content(reply.getContent())
     			.memberName(reply.getMember().getMemberName())
+    			.taggedMember(reply.getTaggedMember())
     			.createdAt(reply.getCreatedAt())
     			.modifiedAt(reply.getModifiedAt())
     			.build();

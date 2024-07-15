@@ -17,5 +17,7 @@ public class ReplyRequestDto {
     private Long commentId;
 
     private String content;
+    
+    private Long replyId;
 	
 }

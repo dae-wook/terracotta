@@ -32,7 +32,7 @@ public class CommentResponseDto {
     			.schematicPostId(comment.getSchematicPost().getId())
     			.content(comment.getContent())
     			.memberName(comment.getMember().getMemberName())
-    			.replies(comment.getReplies().stream().map(ReplyResponseDto :: of).toList())
+    			.replies(comment.getReplies() != null ? comment.getReplies().stream().map(ReplyResponseDto :: of).toList() : null)
     			.createdAt(comment.getCreatedAt())
     			.modifiedAt(comment.getModifiedAt())
     			.build();
