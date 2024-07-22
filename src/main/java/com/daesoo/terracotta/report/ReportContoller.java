@@ -5,13 +5,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.dto.ResponseDto;
-import com.daesoo.terracotta.common.entity.Report;
 import com.daesoo.terracotta.common.exception.UnauthorizedException;
 import com.daesoo.terracotta.member.UserDetailsImpl;
 
@@ -63,6 +63,18 @@ public class ReportContoller {
     	
 		return ResponseDto.success(HttpStatus.CREATED, reportService.reportReply(replyId, reason, userDetails.getUser()));
     }
+    
+	@PutMapping("/{reportId}")
+    public ResponseDto<ReportResponseDto> deleteReport(@PathVariable Long reportId,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+        return ResponseDto.success(HttpStatus.CREATED, reportService.updateReportStatus(reportId, userDetails.getUser()));
+    }
+
 
 
 }

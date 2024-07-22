@@ -73,4 +73,15 @@ public class ReportService {
         return ReportResponseDto.of(report);
     }
 
+	public ReportResponseDto updateReportStatus(Long reportId, Member user) {
+		Report report = reportRepository.findById(reportId).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.REPORT_NOT_FOUND.getMessage())
+				);
+		
+		
+		report.updateReportStatus(true);
+		
+		return ReportResponseDto.of(report);
+	}
+
 }

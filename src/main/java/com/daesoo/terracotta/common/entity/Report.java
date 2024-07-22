@@ -27,6 +27,8 @@ public class Report extends TimeStamp {
 
     @Column(nullable = false)
     private String reason;
+    
+    private boolean status;
 
     @ManyToOne
     private Member reportedBy;
@@ -39,4 +41,8 @@ public class Report extends TimeStamp {
     
     @ManyToOne
     private Reply reply;
+    
+    public void updateReportStatus(boolean status) {
+    	this.status = status;
+    }
 }
