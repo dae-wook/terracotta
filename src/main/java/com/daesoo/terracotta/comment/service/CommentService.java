@@ -41,12 +41,22 @@ public class CommentService {
 	
 
 
-	public Page<CommentResponseDto> getComment(Long schematicPostId, Integer page, Integer size) {
+	public Page<CommentResponseDto> getCommentList(Long schematicPostId, Integer page, Integer size) {
 		// TODO Auto-generated method stub
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		
 		
 		return commentRepository.findAllBySchematicPostId(schematicPostId, pageable).map(CommentResponseDto::of);
+	}
+	
+	public CommentResponseDto getComment(Long commentId) {
+		// TODO Auto-generated method stub
+		Comment comment = commentRepository.findById(commentId).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
+				);
+		
+		
+		return CommentResponseDto.of(comment);
 	}
 
 	@Transactional
@@ -56,15 +66,6 @@ public class CommentService {
 		SchematicPost schematicPost = schematicPostRepository.findById(dto.getSchematicPostId()).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.POST_NOT_FOUND.getMessage())
 				);
-		
-		//댓글을 이미 달았을때 Exception.. TODO: 성능 개선 여지 있음
-//		for(Comment comment : schematicPost.getComments()) {
-//			if(comment.getMember().getEmail().equals(member.getEmail())) {
-//				throw new IllegalArgumentException(ErrorMessage.ALREADY_EXIST_COMMENT.getMessage());
-//			}
-//		}
-		
-		
 		
 		Comment comment = Comment.create(dto, schematicPost, member);
 		
@@ -160,7 +161,8 @@ public class CommentService {
 		return ReplyResponseDto.of(reply);
 	}
 
-	public Boolean updateReply(Long replyId, ReplyRequestDto dto, Member user) {
+	@Transactional
+	public ReplyResponseDto updateReply(Long replyId, ReplyRequestDto dto, Member user) {
 		Reply reply = replyRepository.findById(replyId).orElseThrow(
 				() -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
 				);
@@ -172,8 +174,7 @@ public class CommentService {
 		
 		reply.update(dto);
 		
-		
-		return true;
+		return ReplyResponseDto.of(reply);
 	}
 
 	public Boolean deleteReply(Long replyId, Member user) {

@@ -34,12 +34,18 @@ public class CommentController {
 	
 	private final CommentService commentService;
 	
-	@GetMapping("/{schematicPostId}")
-	public ResponseDto<Page<CommentResponseDto>> getComment(
-			@PathVariable("schematicPostId") Long schematicPostId,
+	@GetMapping
+	public ResponseDto<Page<CommentResponseDto>> getCommentList(
+			@RequestParam("schematicPostId") Long schematicPostId,
 			@RequestParam(name="page", defaultValue = "1") Integer page,
             @RequestParam(name="size", defaultValue = "10") Integer size) {
-		return ResponseDto.success(HttpStatus.OK, commentService.getComment(schematicPostId, page, size));
+		return ResponseDto.success(HttpStatus.OK, commentService.getCommentList(schematicPostId, page, size));
+	}
+	
+	@GetMapping("/{commentId}")
+	public ResponseDto<CommentResponseDto> getComment(
+			@PathVariable("commentId") Long commentId) {
+		return ResponseDto.success(HttpStatus.OK, commentService.getComment(commentId));
 	}
 
 	@PostMapping
@@ -94,9 +100,9 @@ public class CommentController {
 	}
 	
 	@PutMapping("/replies/{replyId}")
-	public ResponseDto<Boolean> updateReply(
+	public ResponseDto<ReplyResponseDto> updateReply(
 			@PathVariable("replyId") Long replyId,
-			ReplyRequestDto dto,
+			@RequestBody ReplyRequestDto dto,
 			@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		
 		if (userDetails == null) {
