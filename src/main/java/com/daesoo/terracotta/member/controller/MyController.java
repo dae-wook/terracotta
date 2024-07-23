@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.daesoo.terracotta.comment.dto.CommentResponseDto;
+import com.daesoo.terracotta.comment.dto.MyCommentResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.dto.ResponseDto;
 import com.daesoo.terracotta.common.exception.UnauthorizedException;
@@ -35,7 +35,7 @@ public class MyController {
 	
 	
 	@GetMapping("/comments")
-	public ResponseDto<Page<CommentResponseDto>> getCommentListByLoginMember(
+	public ResponseDto<Page<MyCommentResponseDto>> getCommentListByLoginMember(
 			@AuthenticationPrincipal UserDetailsImpl userDetails,
 			@RequestParam(name="page", defaultValue = "1") Integer page,
             @RequestParam(name="size", defaultValue = "10") Integer size) {
@@ -73,6 +73,7 @@ public class MyController {
 		
 		return ResponseDto.success(HttpStatus.OK, myService.getSchematicPostListByLoginMember(userDetails.getUser(), page, size, tags));
 	}
+	
 	
 	@PutMapping("/intro")
 	public ResponseDto<String> updateIntroduction(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody String introduction) {

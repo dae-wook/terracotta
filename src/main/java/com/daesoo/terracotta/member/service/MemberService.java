@@ -23,6 +23,7 @@ import com.daesoo.terracotta.common.util.MailUtil;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
+import com.daesoo.terracotta.member.dto.MemberInfoResponseDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
 import com.daesoo.terracotta.member.dto.PasswordChangeRequestDto;
 import com.daesoo.terracotta.member.dto.PasswordResetRequestDto;
@@ -240,6 +241,15 @@ public class MemberService {
 		member.resetPassword(encodedPassword);
 		
 		return true;
+	}
+
+	public MemberInfoResponseDto getMemberInfo(String nickname) {
+		
+		Member member = memberRepository.findByMemberName(nickname).orElseThrow(
+				() -> new EntityNotFoundException(ErrorMessage.MEMBER_NOT_FOUND.getMessage())
+				);
+		
+		return MemberInfoResponseDto.of(member);
 	}
 
 	

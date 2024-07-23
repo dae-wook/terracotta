@@ -20,6 +20,8 @@ public class MemberResponseDto {
 	
 	private String token;
 	
+	private String profileImage;
+	
 	private List<NotificationResponseDto> notifications;
 	
 	private String ipAddress;
@@ -31,6 +33,7 @@ public class MemberResponseDto {
 				.nickname(member.getMemberName())
 				.token(token)
 				.ipAddress(ipAddress)
+				.profileImage(member.getProfileImage())
 				.notifications(member.getNotifications().stream().map(NotificationResponseDto :: of).toList())
 				.build();
 	}

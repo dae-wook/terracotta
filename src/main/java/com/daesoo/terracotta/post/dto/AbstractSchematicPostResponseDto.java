@@ -3,11 +3,9 @@ package com.daesoo.terracotta.post.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.daesoo.terracotta.buildprogress.dto.BuildProgressInScheamticPostResponseDto;
-import com.daesoo.terracotta.common.entity.BuildProgress;
 import com.daesoo.terracotta.common.entity.SchematicPost;
+import com.daesoo.terracotta.member.dto.MemberInfoResponseDto;
 
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -21,7 +19,7 @@ public class AbstractSchematicPostResponseDto {
 	
 	private List<PostTagResponseDto> tags;
 	
-	private String memberName;
+	private MemberInfoResponseDto member;
 	
 	private List<ImageResponseDto> images;
 	
@@ -44,7 +42,7 @@ public class AbstractSchematicPostResponseDto {
         this.title = schematicPost.getTitle();
         this.description = schematicPost.getContent();
         this.tags = schematicPost.getPostTags().stream().map(PostTagResponseDto::of).toList();
-        this.memberName = schematicPost.getMember().getMemberName();
+        this.member = MemberInfoResponseDto.of(schematicPost.getMember());
         this.images = schematicPost.getImages().stream().map(ImageResponseDto::of).toList();
         this.buyCount = schematicPost.getBuyCount();
         this.commentCount = schematicPost.getCommentCount();

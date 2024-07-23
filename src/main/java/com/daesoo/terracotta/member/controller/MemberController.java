@@ -20,6 +20,7 @@ import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
+import com.daesoo.terracotta.member.dto.MemberInfoResponseDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
 import com.daesoo.terracotta.member.dto.PasswordChangeRequestDto;
 import com.daesoo.terracotta.member.dto.PasswordResetRequestDto;
@@ -100,6 +101,12 @@ public class MemberController {
 			@PathVariable("email") String email) {
 		
 		return ResponseDto.success(HttpStatus.OK, memberService.existByEmail(email));
+	}
+	
+	@GetMapping("/info/{nickname}")
+	public ResponseDto<MemberInfoResponseDto> getMemberInfo(@PathVariable("nickname") String nickname) {
+		
+		return ResponseDto.success(HttpStatus.OK, memberService.getMemberInfo(nickname));
 	}
 	
 	@PostMapping("/email/send")

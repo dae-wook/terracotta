@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
+import com.daesoo.terracotta.comment.dto.MyCommentResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.common.entity.Notification;
@@ -47,12 +48,12 @@ public class MyService {
 
 	
 
-	public Page<CommentResponseDto> getCommentListByLoginMember(Member member, Integer page, Integer size) {
+	public Page<MyCommentResponseDto> getCommentListByLoginMember(Member member, Integer page, Integer size) {
 		
 //		commentRepository.findByMemberMemberId(member.getId());
 		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		
-		return commentRepository.findByMemberId(pageable, member.getId()).map(CommentResponseDto::of);
+		return commentRepository.findByMemberId(pageable, member.getId()).map(MyCommentResponseDto::of);
 	}
 
 	

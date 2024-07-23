@@ -3,6 +3,7 @@ package com.daesoo.terracotta.comment.dto;
 import java.time.LocalDateTime;
 
 import com.daesoo.terracotta.common.entity.Reply;
+import com.daesoo.terracotta.member.dto.MemberInfoResponseDto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class ReplyResponseDto {
 
     private String content;
     
-    private String memberName;
+    private MemberInfoResponseDto member;
     
     private String taggedMember;
     
@@ -30,7 +31,7 @@ public class ReplyResponseDto {
     			.id(reply.getId())
     			.commentId(reply.getComment().getId())
     			.content(reply.getContent())
-    			.memberName(reply.getMember().getMemberName())
+    			.member(MemberInfoResponseDto.of(reply.getMember()))
     			.taggedMember(reply.getTaggedMember())
     			.createdAt(reply.getCreatedAt())
     			.modifiedAt(reply.getModifiedAt())
