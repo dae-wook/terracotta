@@ -93,6 +93,20 @@ public class SchematicPostController {
 		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematic(schematicPostId, userDetails));
 	}
 	
+	@GetMapping("/my")
+	public ResponseDto<Page<SchematicPostResponseDto>> getSchematicPostListByLoginMember(
+			@AuthenticationPrincipal UserDetailsImpl userDetails,
+			@RequestParam(name="page", defaultValue = "1") Integer page,
+            @RequestParam(name="size", defaultValue = "10") Integer size,
+            @RequestParam(name="tags", defaultValue = "0") Long[] tags) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, schematicPostService.getSchematicPostListByLoginMember(userDetails.getUser(), page, size, tags));
+	}
+	
 	@DeleteMapping("{schematicPostId}")
 	public ResponseDto<Boolean> deleteSchematic(
 			@PathVariable("schematicPostId") Long schematicPostId,

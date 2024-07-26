@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.comment.dto.CommentRequestDto;
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
+import com.daesoo.terracotta.comment.dto.MyCommentResponseDto;
 import com.daesoo.terracotta.comment.dto.ReplyRequestDto;
 import com.daesoo.terracotta.comment.dto.ReplyResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorMessage;
@@ -47,6 +48,14 @@ public class CommentService {
 		
 		
 		return commentRepository.findAllBySchematicPostId(schematicPostId, pageable).map(CommentResponseDto::of);
+	}
+	
+	public Page<MyCommentResponseDto> getCommentListByLoginMember(Member member, Integer page, Integer size) {
+		
+//		commentRepository.findByMemberMemberId(member.getId());
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		
+		return commentRepository.findByMemberId(pageable, member.getId()).map(MyCommentResponseDto::of);
 	}
 	
 	public CommentResponseDto getComment(Long commentId) {

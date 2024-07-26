@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.daesoo.terracotta.common.entity.Comment;
+import com.daesoo.terracotta.member.dto.MemberInfoResponseDto;
 import com.daesoo.terracotta.post.dto.SchematicPostListResponseDto;
 
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class MyCommentResponseDto {
 
     private String content;
     
-    private String memberName;
+    private MemberInfoResponseDto member;
     
     private LocalDateTime createdAt;
     
@@ -32,7 +33,7 @@ public class MyCommentResponseDto {
     			.id(comment.getId())
     			.schematicPost(SchematicPostListResponseDto.of(comment.getSchematicPost()))
     			.content(comment.getContent())
-    			.memberName(comment.getMember().getMemberName())
+    			.member(MemberInfoResponseDto.of(comment.getMember()))
     			.replies(comment.getReplies() != null ? comment.getReplies().stream().map(ReplyResponseDto :: of).toList() : null)
     			.createdAt(comment.getCreatedAt())
     			.modifiedAt(comment.getModifiedAt())

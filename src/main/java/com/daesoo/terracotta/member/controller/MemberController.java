@@ -2,6 +2,7 @@ package com.daesoo.terracotta.member.controller;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,9 +10,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.dto.ResponseDto;
@@ -19,6 +23,7 @@ import com.daesoo.terracotta.common.exception.UnauthorizedException;
 import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
+import com.daesoo.terracotta.member.dto.LoginHistoryResponseDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberInfoResponseDto;
 import com.daesoo.terracotta.member.dto.MemberResponseDto;
@@ -103,10 +108,43 @@ public class MemberController {
 		return ResponseDto.success(HttpStatus.OK, memberService.existByEmail(email));
 	}
 	
-	@GetMapping("/info/{nickname}")
+	@GetMapping("/profile/{nickname}")
 	public ResponseDto<MemberInfoResponseDto> getMemberInfo(@PathVariable("nickname") String nickname) {
 		
 		return ResponseDto.success(HttpStatus.OK, memberService.getMemberInfo(nickname));
+	}
+	
+	@GetMapping("/my/histories")
+	public ResponseDto<Page<LoginHistoryResponseDto>> getLoginHistory(
+			@AuthenticationPrincipal UserDetailsImpl userDetails,
+			@RequestParam(name="page", defaultValue = "1") Integer page,
+            @RequestParam(name="size", defaultValue = "10") Integer size) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, memberService.getLoginHistory(userDetails.getUser(), page, size));
+	}
+	
+	@PutMapping("/my/intro")
+	public ResponseDto<String> updateIntroduction(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody String introduction) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, memberService.updateIntroduction(userDetails.getUser(), introduction));
+	}
+	
+	@PutMapping("/my/profile-image")
+	public ResponseDto<String> updateProfileImage(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("image") MultipartFile image) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, memberService.updateProfileImage(image, userDetails.getUser()));
 	}
 	
 	@PostMapping("/email/send")

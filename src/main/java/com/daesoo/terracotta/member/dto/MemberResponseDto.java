@@ -14,27 +14,21 @@ public class MemberResponseDto {
 	
 	private Long id;
 	
+	private MemberInfoResponseDto member;
+	
 	private String email;
 	
-	private String nickname;
-	
 	private String token;
-	
-	private String profileImage;
-	
-	private List<NotificationResponseDto> notifications;
 	
 	private String ipAddress;
 	
 	public static MemberResponseDto of(Member member, String token, String ipAddress) {
 		return MemberResponseDto.builder()
 				.id(member.getId())
+				.member(MemberInfoResponseDto.of(member))
 				.email(member.getEmail())
-				.nickname(member.getMemberName())
 				.token(token)
 				.ipAddress(ipAddress)
-				.profileImage(member.getProfileImage())
-				.notifications(member.getNotifications().stream().map(NotificationResponseDto :: of).toList())
 				.build();
 	}
 

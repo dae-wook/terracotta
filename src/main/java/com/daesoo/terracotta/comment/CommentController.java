@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.daesoo.terracotta.comment.dto.CommentRequestDto;
 import com.daesoo.terracotta.comment.dto.CommentResponseDto;
+import com.daesoo.terracotta.comment.dto.MyCommentResponseDto;
 import com.daesoo.terracotta.comment.dto.ReplyRequestDto;
 import com.daesoo.terracotta.comment.dto.ReplyResponseDto;
 import com.daesoo.terracotta.comment.service.CommentService;
@@ -46,6 +47,19 @@ public class CommentController {
 	public ResponseDto<CommentResponseDto> getComment(
 			@PathVariable("commentId") Long commentId) {
 		return ResponseDto.success(HttpStatus.OK, commentService.getComment(commentId));
+	}
+	
+	@GetMapping("/my")
+	public ResponseDto<Page<MyCommentResponseDto>> getCommentListByLoginMember(
+			@AuthenticationPrincipal UserDetailsImpl userDetails,
+			@RequestParam(name="page", defaultValue = "1") Integer page,
+            @RequestParam(name="size", defaultValue = "10") Integer size) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, commentService.getCommentListByLoginMember(userDetails.getUser(), page, size));
 	}
 
 	@PostMapping

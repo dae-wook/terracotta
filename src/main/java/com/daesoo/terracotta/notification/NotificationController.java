@@ -1,10 +1,13 @@
 package com.daesoo.terracotta.notification;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
@@ -33,6 +36,19 @@ public class NotificationController {
 	    }
 		
 		return ResponseDto.success(HttpStatus.OK, notificationService.deleteAllReadNotificationsByLoginMember(userDetails.getUser()));
+	}
+	
+	@GetMapping("/my") 
+	public ResponseDto<Page<NotificationResponseDto>>getNotificationByLoginMember(
+			@AuthenticationPrincipal UserDetailsImpl userDetails,
+			@RequestParam(name="page", defaultValue = "1") Integer page,
+            @RequestParam(name="size", defaultValue = "7") Integer size) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, notificationService.getNotificationByLoginMember(page, size, userDetails.getUser()));
 	}
 
 }

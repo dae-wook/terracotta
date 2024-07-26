@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.daesoo.terracotta.common.entity.Member;
@@ -19,6 +23,20 @@ import lombok.RequiredArgsConstructor;
 public class NotificationService {
 
 	private final NotificationRepository notificationRepository;
+	
+	@Transactional
+	public Page<NotificationResponseDto> getNotificationByLoginMember(Integer page, Integer size, Member user) {
+		// TODO Auto-generated method stub
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		
+		Page<Notification> notifications = notificationRepository.findAllByMember(pageable, user);
+		
+		for(Notification notification : notifications.get().toList()) {
+			notification.read();
+		}
+		
+		return notifications.map(NotificationResponseDto :: of); 
+	}
 	
 	@Transactional
 	public Boolean createNotification(NotificationRequestDto dto, Member member) {

@@ -162,6 +162,16 @@ public class SchematicPostService {
 		return SchematicPostResponseDto.of(schematicPost, optionalBuildProgress.isPresent() ? optionalBuildProgress.get() : null);
 	}
 	
+	public Page<SchematicPostResponseDto> getSchematicPostListByLoginMember(Member user, Integer page, Integer size, Long[] tags) {
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+		if(tags[0] == 0) {
+			return schematicPostRepository.findAllByMember(pageable, user).map(SchematicPostResponseDto::of);
+		}
+
+		return postTagRepository.findPostsByTagsAndMember(pageable, tags, tags.length, user).map(SchematicPostResponseDto::of);
+	}
+	
 //	@Async
 	public SchematicDto getSchematic(Long schematicPostId, UserDetailsImpl userDetails) {
 		SchematicPost schematicPost = schematicPostRepository.findById(schematicPostId).orElseThrow(
