@@ -24,27 +24,27 @@ public class LoginAspect {
 	private final LocationService locationService;
 	private final LoginHistoryRepository loginHistoryRepository;
 
-    @AfterReturning(
-            pointcut = "execution(* com.daesoo.terracotta.member.service.MemberService.login(..))",
-            returning = "result")
-    public void logSuccessfulLogin(MemberResponseDto result) {
-
-
-		ObjectMapper mapper = new ObjectMapper();
-		IpInfo ipInfo = null;
-		
-
-		try {
-			ipInfo = mapper.readValue(locationService.getLocationByIp(result.getIpAddress()), IpInfo.class);
-			
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		LoginHistory loginHistory = LoginHistory.create(result, ipInfo);
-		
-		loginHistoryRepository.save(loginHistory);
-    }
+//    @AfterReturning(
+//            pointcut = "execution(* com.daesoo.terracotta.member.service.MemberService.login(..))",
+//            returning = "result")
+//    public void logSuccessfulLogin(MemberResponseDto result) {
+//
+//
+//		ObjectMapper mapper = new ObjectMapper();
+//		IpInfo ipInfo = null;
+//		
+//
+//		try {
+//			ipInfo = mapper.readValue(locationService.getLocationByIp(result.getIpAddress()), IpInfo.class);
+//			
+//		} catch (JsonProcessingException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		LoginHistory loginHistory = LoginHistory.create(result, ipInfo);
+//		
+//		loginHistoryRepository.save(loginHistory);
+//    }
 }

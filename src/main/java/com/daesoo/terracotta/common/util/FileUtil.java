@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.daesoo.terracotta.common.entity.BuildProgress;
 import com.daesoo.terracotta.common.entity.Image;
+import com.daesoo.terracotta.image.ImageType;
 import com.daesoo.terracotta.post.dto.FileNameDto;
 import com.daesoo.terracotta.schematic.util.SchematicDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -125,7 +126,7 @@ public class FileUtil {
         throw new IllegalArgumentException("GCS에 저장 중 에러 발생");
     }
     
-	public ArrayList<String> uploadImages(MultipartFile[] images) {
+	public ArrayList<String> uploadImages(MultipartFile[] images, ImageType imageType) {
 
 		try{
 			log.debug("업로드 시작");
@@ -142,6 +143,13 @@ public class FileUtil {
 			long currentTimeMillis = instant.toEpochMilli();
 			
 			ArrayList<String> imageNames = new ArrayList<>();
+			String path = null;
+			switch(imageType) {
+				case PROFILE_IMAGE : path = "profile/"; break;
+				case THUMBNAIL : path = "schematic/thumbs/"; break;
+				default : new IllegalArgumentException("잘못된 이미지 타입");
+			}
+			log.debug("업로드 경로 : {}", path);
 			for(MultipartFile image : images) {
 				String originalImageFileName = image.getOriginalFilename();
 				String imageFileName = originalImageFileName.substring(0, originalImageFileName.lastIndexOf('.'));
@@ -151,14 +159,15 @@ public class FileUtil {
 
 				String saveImageFileName = imageFileName + "-" + currentTimeMillis + checkImageFileExtension(originalImageFileName);
 				imageNames.add(saveImageFileName);
+				
 
-				Blob imageBlob = imageBucket.create(imageDirectory + "/thumbs" + saveImageFileName, imageFileData, image.getContentType());
+				Blob imageBlob = imageBucket.create(path + saveImageFileName, imageFileData, image.getContentType());
 			}
 
 
 
 			if(imageNames.size() > 0){
-				log.debug("업로드 성공");
+				log.debug("업로드 성공" + imageNames);
 				return imageNames;
 			}
 

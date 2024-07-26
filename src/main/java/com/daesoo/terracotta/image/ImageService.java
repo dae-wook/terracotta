@@ -8,9 +8,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.daesoo.terracotta.common.dto.ErrorMessage;
 import com.daesoo.terracotta.common.entity.Image;
+import com.daesoo.terracotta.common.entity.Member;
 import com.daesoo.terracotta.common.entity.SchematicPost;
+import com.daesoo.terracotta.common.entity.UploadHistory;
 import com.daesoo.terracotta.common.repository.ImageRepository;
 import com.daesoo.terracotta.common.repository.SchematicPostRepository;
+import com.daesoo.terracotta.common.repository.UploadHistoryRepository;
 import com.daesoo.terracotta.common.util.FileUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -21,14 +24,26 @@ public class ImageService {
 	
 	private final FileUtil fileUtil;
 	private final ImageRepository imageRepository;
+	private final UploadHistoryRepository uploadHistoryRepository;
 	private final SchematicPostRepository schematicPostRepository;
 
-	public UploadedImageResponseDto uploadImages(MultipartFile[] images) {
+	public UploadedImageResponseDto uploadImages(MultipartFile[] images, ImageType imageType, Member member) {
 		// TODO Auto-generated method stub
 		if(images.length <= 0) {
 			throw new IllegalArgumentException(ErrorMessage.IMAGE_NOT_FOUND.getMessage());
 		}
-		return UploadedImageResponseDto.of(fileUtil.uploadImages(images));
+		
+		ArrayList<String> uploadedImageNames = fileUtil.uploadImages(images, imageType);
+		
+		List<UploadHistory> uploadHistories = new ArrayList<>();
+		
+		for(String imageName : uploadedImageNames) {
+			uploadHistories.add(UploadHistory.create(imageName, imageType, member));
+		}
+		
+		uploadHistoryRepository.saveAll(uploadHistories);
+		
+		return UploadedImageResponseDto.of(uploadedImageNames);
 	}
 
 	public Boolean deleteImages(String[] imageNames) {

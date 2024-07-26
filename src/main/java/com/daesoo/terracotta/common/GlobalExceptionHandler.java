@@ -3,11 +3,13 @@ package com.daesoo.terracotta.common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.daesoo.terracotta.common.dto.ErrorResponseDto;
 import com.daesoo.terracotta.common.dto.ErrorType;
@@ -76,5 +78,15 @@ public class GlobalExceptionHandler {
     	log.error(" occurred: {}", ex.getMessage());
     	ErrorResponseDto errorResponseDto = ErrorResponseDto.of(ErrorType.UNATHORIZED_EXCEPTION, ex.getMessage());
         return ResponseDto.fail(HttpStatus.UNAUTHORIZED, errorResponseDto);
+    }
+    
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDto<ErrorResponseDto> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+    	log.error(" occurred: {}", ex.getMessage());
+    	ErrorResponseDto errorResponseDto = ErrorResponseDto.of(ErrorType.ILLEGAL_ARGUMENT_EXCEPTION,
+    			String.format("잘못된 값이 입력되었습니다. 파라미터 '%s': '%s'는 허용되지 않습니다.",
+    	                ex.getName(), ex.getValue()));
+        return ResponseDto.fail(HttpStatus.BAD_REQUEST, errorResponseDto);
     }
 }
