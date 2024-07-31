@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+import com.daesoo.terracotta.member.dto.InfoRequestDto;
 import com.daesoo.terracotta.member.dto.SignupRequestDto;
 
 import jakarta.persistence.CascadeType;
@@ -40,6 +42,9 @@ public class Member extends TimeStamp{
     private String memberName;
     
     private String profileImage;
+    
+    private String server;
+    private String village;
     
     @Column(length = 500)
     private String introduction;
@@ -95,6 +100,11 @@ public class Member extends TimeStamp{
 	public void updateProfileImage(String fileName) {
 		this.profileImage = fileName;
 	}
+	
+	public void updateServerAndVillage(String server, String village) {
+		this.server = server;
+		this.village = village;
+	}
 
     @Override
     public boolean equals(Object o) {
@@ -108,4 +118,14 @@ public class Member extends TimeStamp{
     public int hashCode() {
         return Objects.hash(id);
     }
+
+
+	public void updateInfo(InfoRequestDto dto) {
+		
+	    this.introduction = Optional.ofNullable(dto.getIntroduction()).orElse(this.introduction);
+	    this.profileImage = Optional.ofNullable(dto.getProfileImage()).orElse(this.profileImage);
+	    this.server = Optional.ofNullable(dto.getServer()).orElse(this.server);
+	    this.village = Optional.ofNullable(dto.getVillage()).orElse(this.village);
+		
+	}
 }

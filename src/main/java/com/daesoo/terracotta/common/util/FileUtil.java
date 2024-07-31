@@ -144,11 +144,13 @@ public class FileUtil {
 			
 			ArrayList<String> imageNames = new ArrayList<>();
 			String path = null;
+			
 			switch(imageType) {
 				case PROFILE_IMAGE : path = "profile/"; break;
 				case THUMBNAIL : path = "schematic/thumbs/"; break;
 				default : new IllegalArgumentException("잘못된 이미지 타입");
 			}
+			
 			log.debug("업로드 경로 : {}", path);
 			for(MultipartFile image : images) {
 				String originalImageFileName = image.getOriginalFilename();

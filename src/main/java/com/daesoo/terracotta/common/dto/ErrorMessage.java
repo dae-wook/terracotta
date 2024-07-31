@@ -36,7 +36,8 @@ public enum ErrorMessage {
     WRONG_EMAIL_OR_PASSWORD("이메일 또는 패스워드가 일치하지 않습니다."),
     WRONG_JWT_TOKEN("JWT Token이 잘못되었습니다."),
     WRONG_PASSWORD("패스워드가 일치하지 않습니다."),
-    WRONG_USERID("userId가 일치하지 않습니다."),;
+    WRONG_USERID("userId가 일치하지 않습니다."),
+    NULL_DTO("DTO 객체가 null입니다.");
 
     private final String message;
 

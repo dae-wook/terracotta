@@ -23,6 +23,8 @@ import com.daesoo.terracotta.common.exception.UnauthorizedException;
 import com.daesoo.terracotta.member.UserDetailsImpl;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
+import com.daesoo.terracotta.member.dto.InfoRequestDto;
+import com.daesoo.terracotta.member.dto.InfoResponseDto;
 import com.daesoo.terracotta.member.dto.LoginHistoryResponseDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberInfoResponseDto;
@@ -135,6 +137,16 @@ public class MemberController {
 	    }
 		
 		return ResponseDto.success(HttpStatus.OK, memberService.updateIntroduction(userDetails.getUser(), introduction));
+	}
+	
+	@PutMapping("/my/info")
+	public ResponseDto<InfoResponseDto> updateInfoByLoginMember(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody InfoRequestDto dto) {
+		
+		if (userDetails == null) {
+	        throw new UnauthorizedException(ErrorMessage.UNAHTHORIZED.getMessage());
+	    }
+		
+		return ResponseDto.success(HttpStatus.OK, memberService.updateInfoByLoginMember(userDetails.getUser(), dto));
 	}
 	
 	@PutMapping("/my/profile-image")

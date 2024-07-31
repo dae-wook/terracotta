@@ -28,6 +28,8 @@ import com.daesoo.terracotta.common.util.FileUtil;
 import com.daesoo.terracotta.common.util.MailUtil;
 import com.daesoo.terracotta.member.dto.EmailRequestDto;
 import com.daesoo.terracotta.member.dto.EmailVerificationRequestDto;
+import com.daesoo.terracotta.member.dto.InfoRequestDto;
+import com.daesoo.terracotta.member.dto.InfoResponseDto;
 import com.daesoo.terracotta.member.dto.LoginHistoryResponseDto;
 import com.daesoo.terracotta.member.dto.LoginRequestDto;
 import com.daesoo.terracotta.member.dto.MemberInfoResponseDto;
@@ -291,6 +293,21 @@ public class MemberService {
 				);
 		
 		return MemberInfoResponseDto.of(member);
+	}
+
+	
+	@Transactional
+	public InfoResponseDto updateInfoByLoginMember(Member user, InfoRequestDto dto) {
+
+		if (dto == null) {
+	        throw new IllegalArgumentException(ErrorMessage.NULL_DTO.getMessage());
+	    }
+		
+		user.updateInfo(dto);
+		
+		memberRepository.save(user);
+		
+		return InfoResponseDto.of(user);
 	}
 
 	
