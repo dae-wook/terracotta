@@ -1,6 +1,5 @@
-# <a href="https://dmo.greuta.org/" target="_blank">Terracotta</a>
+# <a href="https://terracotta-nu.vercel.app/" target="_blank">Terracotta</a>
 
-[Terracotta]  
 마인크래프트 건축물 공유 웹 사이트 입니다.
 사용자는 마인크래프트 건축물을 추출해서 업로드 할 수 있습니다.
 
